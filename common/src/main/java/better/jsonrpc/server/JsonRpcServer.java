@@ -15,12 +15,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import better.jsonrpc.annotations.JsonRpcParam;
+import better.jsonrpc.core.JsonRpcConnection;
 import better.jsonrpc.exceptions.AnnotationsErrorResolver;
 import better.jsonrpc.exceptions.DefaultErrorResolver;
 import better.jsonrpc.exceptions.ErrorResolver;
 import better.jsonrpc.exceptions.MultipleErrorResolver;
-import better.jsonrpc.util.JsonRpcConnection;
-import better.jsonrpc.util.JsonRpcUtils;
+import better.jsonrpc.util.ProtocolUtils;
 import better.jsonrpc.util.ReflectionUtil;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -102,7 +102,7 @@ public class JsonRpcServer {
 		// validate request
 		if (!backwardsComaptible && !node.has("jsonrpc") || !node.has("method")) {
 			connection.sendResponse(
-				JsonRpcUtils.createErrorResponse(mapper,
+				ProtocolUtils.createErrorResponse(mapper,
 					"2.0", "null", -32600, "Invalid Request", null));
 			return;
 		}
@@ -116,7 +116,7 @@ public class JsonRpcServer {
 		// get node values
 		String version		= (jsonRpcNode!=null && !jsonRpcNode.isNull()) ? jsonRpcNode.asText() : "2.0";
 		String methodName	= (methodNode!=null && !methodNode.isNull()) ? methodNode.asText() : null;
-		Object id			= JsonRpcUtils.parseId(idNode);
+		Object id			= ProtocolUtils.parseId(idNode);
 		
 		// find methods
 		Set<Method> methods = new HashSet<Method>();
@@ -124,7 +124,7 @@ public class JsonRpcServer {
 		if (methods.isEmpty()) {
 			if(id != null) {
 				connection.sendResponse(
-					JsonRpcUtils.createErrorResponse(
+					ProtocolUtils.createErrorResponse(
 						mapper, version, id, -32601, "Method not found", null));
 			}
 			return;
@@ -135,7 +135,7 @@ public class JsonRpcServer {
 		if (methodArgs==null) {
 			if(id != null) {
 				connection.sendResponse(
-					JsonRpcUtils.createErrorResponse(
+					ProtocolUtils.createErrorResponse(
 						mapper, version, id, -32602, "Invalid method parameters", null));
 			}
 			return;
@@ -162,11 +162,11 @@ public class JsonRpcServer {
 			ObjectNode response = null;
 			
 			if(thrown == null) {
-				response = JsonRpcUtils.createSuccessResponse(
+				response = ProtocolUtils.createSuccessResponse(
 						mapper, version, id, result);
 			} else {
 				ErrorResolver.JsonError error = resolveError(thrown, methodArgs);
-				response = JsonRpcUtils.createErrorResponse(
+				response = ProtocolUtils.createErrorResponse(
 						mapper, version, id,
 						error.getCode(), error.getMessage(), error.getData());
 			}

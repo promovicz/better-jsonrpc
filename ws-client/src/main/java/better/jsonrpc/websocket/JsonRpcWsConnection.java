@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import better.jsonrpc.util.JsonRpcConnection;
+import better.jsonrpc.core.JsonRpcConnection;
 
 public class JsonRpcWsConnection extends JsonRpcConnection
 	implements WebSocket, OnTextMessage {

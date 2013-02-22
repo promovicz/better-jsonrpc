@@ -1,4 +1,4 @@
-package better.jsonrpc.util;
+package better.jsonrpc.core;
 
 import java.util.HashSet;
 import java.util.Set;

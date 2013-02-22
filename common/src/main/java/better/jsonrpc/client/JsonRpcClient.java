@@ -12,9 +12,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import better.jsonrpc.core.JsonRpcConnection;
 import better.jsonrpc.exceptions.DefaultExceptionResolver;
 import better.jsonrpc.exceptions.ExceptionResolver;
-import better.jsonrpc.util.JsonRpcConnection;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JavaType;

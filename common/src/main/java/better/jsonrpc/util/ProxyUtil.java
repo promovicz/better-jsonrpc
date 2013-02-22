@@ -19,6 +19,7 @@ import javax.sound.midi.VoiceStatus;
 
 import better.jsonrpc.annotations.JsonRpcNotification;
 import better.jsonrpc.client.JsonRpcClient;
+import better.jsonrpc.core.JsonRpcConnection;
 
 /**
  * Utilities for create client proxies.
