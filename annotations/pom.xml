@@ -8,9 +8,9 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>better-jsonrpc-common</artifactId>
+  <artifactId>better-jsonrpc-annotations</artifactId>
 
-  <name>Better JSON-RPC Common</name>
+  <name>Better JSON-RPC Annotations</name>
 
   <packaging>jar</packaging>
 
@@ -20,25 +20,10 @@
 
   <dependencies>
     <dependency>
-      <groupId>better</groupId>
-      <artifactId>better-jsonrpc-annotations</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
-    </dependency>
-    <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-    </dependency>
-    <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version>
-            <optional>true</optional>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson.version}</version>
+      <optional>true</optional>
     </dependency>
   </dependencies>
   
