@@ -60,6 +60,7 @@ public abstract class JsonRpcConnection {
 		mListeners.remove(l);
 	}
 	
+	abstract public boolean isConnected();
 	abstract public void sendRequest(ObjectNode request);
 	abstract public void sendResponse(ObjectNode response);
 	abstract public void sendNotification(ObjectNode notification);

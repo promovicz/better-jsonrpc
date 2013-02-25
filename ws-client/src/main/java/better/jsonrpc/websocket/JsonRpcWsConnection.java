@@ -22,6 +22,7 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 		super(mapper);
 	}
 	
+	@Override
 	public boolean isConnected() {
 		return mConnection != null && mConnection.isOpen();
 	}
