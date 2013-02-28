@@ -86,9 +86,7 @@ public abstract class JsonRpcConnection {
 	public interface Listener {
 		public void onOpen(JsonRpcConnection connection);
 		public void onClose(JsonRpcConnection connection);
-		public void onMessageSent(JsonRpcConnection connection, ObjectNode message);
-		public void onMessageReceived(JsonRpcConnection connection, ObjectNode message);
-	}
+    }
 	
 	public void onOpen() {
 		for(Listener l: mListeners) {
@@ -99,18 +97,6 @@ public abstract class JsonRpcConnection {
 	public void onClose() {
 		for(Listener l: mListeners) {
 			l.onClose(this);
-		}
-	}
-	
-	public void onMessageSent(ObjectNode message) {
-		for(Listener l: mListeners) {
-			l.onMessageSent(this, message);
-		}
-	}
-	
-	public void onMessageReceived(ObjectNode message) {
-		for(Listener l: mListeners) {
-			l.onMessageReceived(this, message);
 		}
 	}
 	
