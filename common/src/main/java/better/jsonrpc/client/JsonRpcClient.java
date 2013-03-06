@@ -198,8 +198,11 @@ public class JsonRpcClient {
 		// add protocol and method
 		request.put("jsonrpc", JSON_RPC_VERSION);
 		request.put("method", methodName);
-		
-		// object array args
+
+        // default empty arguments, will be replaced further down
+        request.put("params", mapper.valueToTree(new Object[0]));
+
+        // object array args
 		if (arguments!=null && arguments.getClass().isArray()) {
 			Object[] args = Object[].class.cast(arguments);
 			if (args.length>0) {
