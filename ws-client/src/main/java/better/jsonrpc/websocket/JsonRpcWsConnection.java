@@ -34,7 +34,7 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 	}
 	
 	public void transmit(String data) {
-		log.fine("[" + mConnectionId + "] connection transmitting \"" + data + "\"");
+		log.info("[" + mConnectionId + "] connection transmitting \"" + data + "\"");
 		if(mConnection != null && mConnection.isOpen()) {
 			try {
 				mConnection.sendMessage(data);
@@ -46,25 +46,26 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 	
 	@Override
 	public void onOpen(Connection connection) {
-		log.fine("[" + mConnectionId + "] connection open");
+		log.info("[" + mConnectionId + "] connection open");
 		super.onOpen();
 		mConnection = connection;
 	}
 	
 	@Override
 	public void onClose(int closeCode, String message) {
-		log.fine("[" + mConnectionId + "] connection close " + closeCode + "/" + message);
+		log.info("[" + mConnectionId + "] connection close " + closeCode + "/" + message);
 		super.onClose();
 		mConnection = null;
 	}
 	
 	@Override
 	public void onMessage(String data) {
-		log.fine("[" + mConnectionId + "] connection received message \"" + data + "\"");
+		log.info("[" + mConnectionId + "] connection received message \"" + data + "\"");
 		try {
 			JsonNode message = mMapper.readTree(data);
 			if(message.isObject()) {
 				ObjectNode messageObj = ObjectNode.class.cast(message);
+				
 				// requests and notifications
 				if(messageObj.has("method") && messageObj.has("params")) {
 					if(messageObj.has("id")) {
