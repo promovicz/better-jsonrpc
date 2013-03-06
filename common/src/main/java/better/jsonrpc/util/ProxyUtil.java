@@ -148,7 +148,7 @@ public abstract class ProxyUtil {
 
 		// create and return the proxy
 		return (T)Proxy.newProxyInstance(
-			ClassLoader.getSystemClassLoader(),
+			classLoader,
 			new Class<?>[] {proxyInterface},
 			new InvocationHandler() {
 				public Object invoke(Object proxy, Method method, Object[] args)
