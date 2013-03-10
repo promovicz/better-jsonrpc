@@ -1,0 +1,10 @@
+.classpath
+.project
+.settings
+**/.project
+**/.settings
+**/.classpath
+**/bin
+**/gen
+**/gen-external-apklibs
+**/target
