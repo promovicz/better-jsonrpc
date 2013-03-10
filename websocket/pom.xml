@@ -8,9 +8,9 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>better-jsonrpc-ws-client</artifactId>
+  <artifactId>better-jsonrpc-websocket</artifactId>
 
-  <name>Better JSON-RPC WebSocket Client</name>
+  <name>Better JSON-RPC WebSocket Module</name>
 
   <packaging>jar</packaging>
 

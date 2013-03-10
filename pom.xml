@@ -11,7 +11,7 @@
   <modules>
     <module>annotations</module>
     <module>common</module>
-	<module>ws-client</module>
+    <module>websocket</module>
   </modules>
 
   <properties>
