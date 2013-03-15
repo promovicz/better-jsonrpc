@@ -67,7 +67,7 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 				ObjectNode messageObj = ObjectNode.class.cast(message);
 				
 				// requests and notifications
-				if(messageObj.has("method") && messageObj.has("params")) {
+				if(messageObj.has("method")) {
 					if(messageObj.has("id")) {
 						handleRequest(messageObj);
 					} else {
