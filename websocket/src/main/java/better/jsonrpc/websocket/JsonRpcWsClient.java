@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
 
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocket.OnTextMessage;
@@ -35,15 +36,19 @@ public class JsonRpcWsClient extends JsonRpcWsConnection
 	}
 	
 	public void connect() throws IOException {
+        if(LOG.isLoggable(Level.INFO)) {
+            LOG.info("[" + mConnectionId + "] connecting");
+        }
 		mClient.open(mServiceUri, this);
 	}
 
-    public void connect(long maxWait, TimeUnit maxWaitUnit) throws TimeoutException, IOException {
-        try {
-            mClient.open(mServiceUri, this, maxWait, maxWaitUnit);
-        } catch (InterruptedException e) {
-            // ignore
+    public void connect(long maxWait, TimeUnit maxWaitUnit)
+            throws TimeoutException, IOException, InterruptedException
+    {
+        if(LOG.isLoggable(Level.INFO)) {
+            LOG.info("[" + mConnectionId + "] connecting with timeout of " + maxWait + " " + maxWaitUnit);
         }
+        mClient.open(mServiceUri, this, maxWait, maxWaitUnit);
     }
 
 }
