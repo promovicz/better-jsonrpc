@@ -44,7 +44,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class JsonRpcServer {
 
-	protected static final Logger LOGGER = Logger.getLogger(JsonRpcServer.class.getName());
+	protected static final Logger LOG = Logger.getLogger(JsonRpcServer.class.getName());
 
 	public static final String JSONRPC_RESPONSE_CONTENT_TYPE = "application/json-rpc";
 
@@ -103,8 +103,8 @@ public class JsonRpcServer {
 	 * @throws IOException on error
 	 */
 	public void handleRequest(Object handler, ObjectNode node, JsonRpcConnection connection) {
-		if (LOGGER.isLoggable(Level.FINE)) {
-			LOGGER.log(Level.FINE, "Request: "+node.toString());
+		if (LOG.isLoggable(Level.FINE)) {
+			LOG.log(Level.FINE, "Request: " + node.toString());
 		}
 
 		// validate request
@@ -160,8 +160,8 @@ public class JsonRpcServer {
 		
 		// log errors
 		if(thrown != null) {
-			if (LOGGER.isLoggable(Level.SEVERE)) {
-				LOGGER.log(Level.SEVERE, "Error in JSON-RPC Service", thrown);
+			if (LOG.isLoggable(Level.SEVERE)) {
+				LOG.log(Level.SEVERE, "Error in JSON-RPC Service", thrown);
 			}
 		}
 		
@@ -234,8 +234,8 @@ public class JsonRpcServer {
 		InvocationTargetException {
 
 		// debug log
-		if (LOGGER.isLoggable(Level.FINE)) {
-			LOGGER.log(Level.FINE, "Invoking method: "+m.getName());
+		if (LOG.isLoggable(Level.FINE)) {
+			LOG.log(Level.FINE, "Invoking method: "+m.getName());
 		}
 
 		// convert the parameters

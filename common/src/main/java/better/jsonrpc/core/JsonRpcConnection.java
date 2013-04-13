@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public abstract class JsonRpcConnection {
 
     /** Global logger, may be used by subclasses */
-	protected static final Logger log = Logger.getLogger(JsonRpcConnection.class.getSimpleName());
+	protected static final Logger LOG = Logger.getLogger(JsonRpcConnection.class.getSimpleName());
 
     /** Global counter for connection IDs */
 	private static final AtomicInteger sConnectionIdCounter = new AtomicInteger();

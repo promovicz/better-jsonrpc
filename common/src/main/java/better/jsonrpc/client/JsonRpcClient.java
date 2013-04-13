@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
  */
 public class JsonRpcClient {
 
-	private static final Logger LOGGER = Logger.getLogger(JsonRpcClient.class.getName());
+	private static final Logger LOG = Logger.getLogger(JsonRpcClient.class.getName());
 
 	private static final String JSON_RPC_VERSION = "2.0";
 
@@ -160,8 +160,8 @@ public class JsonRpcClient {
 					&& !mResponse.get("result").isNull()
 					&& mResponse.get("result")!=null) {
 					if (returnType==null) {
-						LOGGER.warning(
-							"Server returned result but returnType is null");
+						LOG.warning(
+                                "Server returned result but returnType is null");
 						return null;
 					}
 					
@@ -227,8 +227,8 @@ public class JsonRpcClient {
 		}
 
 		// log
-		if (LOGGER.isLoggable(Level.FINE)) {
-			LOGGER.log(Level.FINE, "JSON-PRC Request: "+request.toString());
+		if (LOG.isLoggable(Level.FINE)) {
+			LOG.log(Level.FINE, "JSON-PRC Request: "+request.toString());
 		}
 
 		// return the request
