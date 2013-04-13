@@ -1,10 +1,7 @@
 package better.jsonrpc.client;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Condition;
@@ -29,10 +26,13 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
  */
 public class JsonRpcClient {
 
-    public static final long DEFAULT_REQUEST_TIMEOUT = 15 * 1000; // msec
+    /** Default request timeout (msecs) */
+    public static final long DEFAULT_REQUEST_TIMEOUT = 15 * 1000;
 
+    /** Global logger for clients */
 	private static final Logger LOG = Logger.getLogger(JsonRpcClient.class.getName());
 
+    /** JSON-RPC version to pretend speaking */
 	private static final String JSON_RPC_VERSION = "2.0";
 
 
@@ -52,6 +52,20 @@ public class JsonRpcClient {
     private Hashtable<String, Request> mOutstandingRequests =
             new Hashtable<String, Request>();
 
+    /** Listener for connection state changes */
+    private JsonRpcConnection.Listener mConnectionListener =
+            new JsonRpcConnection.Listener() {
+                @Override
+                public void onOpen(JsonRpcConnection connection) {
+                    handleConnectionChange(connection);
+                }
+                @Override
+                public void onClose(JsonRpcConnection connection) {
+                    handleConnectionChange(connection);
+                }
+            };
+
+
     /**
      * Creates a client that uses the default {@link ObjectMapper}
      * to map to and from JSON and Java objects.
@@ -69,6 +83,7 @@ public class JsonRpcClient {
 		this.mMapper = mapper;
 		this.mIdGenerator = new Random(System.currentTimeMillis());
 	}
+
 
     /**
      * Returns the {@link ObjectMapper} that the client
@@ -93,6 +108,7 @@ public class JsonRpcClient {
         this.mExceptionResolver = mExceptionResolver;
     }
 
+
     /**
      * Generate a new request id and return it
      * @return
@@ -101,8 +117,79 @@ public class JsonRpcClient {
         return mIdGenerator.nextLong()+"";
     }
 
+
+    /**
+     * Handle binding to a connection
+     */
+    public void bindConnection(JsonRpcConnection connection) {
+        connection.addListener(mConnectionListener);
+    }
+
+    /**
+     * Handle unbinding from a connection
+     */
+    public void unbindConnection(JsonRpcConnection connection) {
+        connection.removeListener(mConnectionListener);
+    }
+
+    /**
+     * Send a request through the connection
+     */
+    public void sendRequest(JsonRpcConnection connection, ObjectNode request) throws Exception {
+        // log request
+        LOG.info("sending request " + request.toString());
+        // send it
+        connection.sendRequest(request);
+    }
+
+    /**
+     * Send a notification through the connection
+     */
+    public void sendNotification(JsonRpcConnection connection, ObjectNode notification) throws Exception {
+        // log notification
+        LOG.info("sending notification " + notification.toString());
+        // send it
+        connection.sendNotification(notification);
+    }
+
+    /**
+     * Handle a connection state change (connect/disconnect)
+     *
+     * This will remove all requests associated with the connection indicated.
+     *
+     * @param connection
+     */
+    private void handleConnectionChange(JsonRpcConnection connection) {
+        synchronized (mOutstandingRequests) {
+            // vector to collect matched requests into
+            Vector<Request> matches = new Vector<Request>();
+            // for every outstanding request
+            Enumeration<Request> reqs = mOutstandingRequests.elements();
+            while(reqs.hasMoreElements()) {
+                Request req = reqs.nextElement();
+                // if the request belongs to the changed connection
+                if(req.getConnection() == connection) {
+                    // unblock the requestor
+                    req.handleDisconnect();
+                    // and remember the request
+                    matches.add(req);
+                }
+            }
+            // for all relevant requests
+            for(Request req: matches) {
+                // remove request from table
+                mOutstandingRequests.remove(req.getId());
+            }
+        }
+    }
+
+
     /**
      * Invoke the method specified via the given connection
+     *
+     * Requests submitted via this method may block and will
+     * be tracked by the client in its outstanding request table.
+     *
      * @param methodName
      * @param arguments
      * @param returnType
@@ -113,34 +200,60 @@ public class JsonRpcClient {
 	public Object invokeMethod(String methodName, Object arguments, Type returnType, JsonRpcConnection connection)
 		throws Throwable {
         Object result = null;
+        // generate request id
         String id = generateId();
+        // construct the JSON request node
         ObjectNode requestNode = createRequest(methodName, arguments, id);
+        // construct the request state object
         Request request = new Request(id, requestNode, connection);
-        mOutstandingRequests.put(id, request);
+        // add the request to client state
+        synchronized (mOutstandingRequests) {
+            mOutstandingRequests.put(id, request);
+        }
+        // request execution
         try {
-            connection.sendRequest(requestNode);
+            // send request
+            sendRequest(connection, requestNode);
+            // wait for response or other result
             result = request.waitForResponse(returnType);
         } catch (Throwable t) {
+            // abort the request
             request.handleException(t);
+            // rethrow for library user to handle
             throw t;
+        } finally {
+            // remove request from client state
+            synchronized (mOutstandingRequests) {
+                mOutstandingRequests.remove(id);
+            }
         }
+        // return final result
         return result;
 	}
 
     /**
      * Invoke the method specified via the given connection
+     *
+     * Note that notifications are never tracked by the client.
+     *
      * @param methodName
      * @param arguments
      * @param connection
      */
 	public void invokeNotification(String methodName, Object arguments, JsonRpcConnection connection)
         throws Throwable {
+        // create the JSON request object
 		ObjectNode requestNode = createRequest(methodName, arguments, null);
+        // create client request object
         Request request = new Request(null, requestNode, connection);
+        // execute the request
         try {
-		    connection.sendRequest(requestNode);
+            // send request
+		    sendNotification(connection, requestNode);
         } catch (Throwable t) {
+            // abort the request
             request.handleException(t);
+            //
             throw t;
         }
 	}
@@ -153,14 +266,25 @@ public class JsonRpcClient {
      */
 	public boolean handleResponse(ObjectNode response, JsonRpcConnection connection) {
 		JsonNode idNode = response.get("id");
+        // check the id, we only use strings
 		if(idNode != null && idNode.isTextual()) {
 			String id = idNode.asText();
-			Request req = mOutstandingRequests.get(id);
+            // log response
+            LOG.info("received response " + response.toString());
+            // retrieve the request from the client table
+			Request req = null;
+            synchronized (mOutstandingRequests) {
+                req = mOutstandingRequests.get(id);
+            }
+            // if there was an actual request
 			if(req != null && req.getConnection() == connection) {
+                // handle the response, unblocking the requestor
 				req.handleResponse(response);
+                // we have handled the request
                 return true;
 			}
 		}
+        // we have not handled the request
         return false;
 	}
 
@@ -224,6 +348,7 @@ public class JsonRpcClient {
 		Lock mLock;
 		Condition mCondition;
 		String mId;
+        boolean mDisconnected;
         Throwable mException;
 		ObjectNode mRequest;
 		ObjectNode mResponse;
@@ -243,7 +368,17 @@ public class JsonRpcClient {
 			return mConnection;
 		}
         private boolean isDone() {
-            return mResponse != null || mException != null;
+            return mDisconnected || mResponse != null || mException != null;
+        }
+        public void handleDisconnect() {
+            mLock.lock();
+            try {
+                if(!isDone()) {
+                    mDisconnected = true;
+                }
+            } finally {
+                mLock.unlock();
+            }
         }
 		public void handleException(Throwable exception) {
 			mLock.lock();
@@ -282,6 +417,11 @@ public class JsonRpcClient {
 					} catch (InterruptedException e) {
 					}
 				}
+
+                // throw if we got disconnected
+                if (mDisconnected) {
+                    throw new RuntimeException("JSON-RPC disconnect");
+                }
 				
 				// detect rpc failures
 				if (mException != null) {
@@ -316,11 +456,10 @@ public class JsonRpcClient {
 					
 					return mMapper.readValue(returnJsonParser, returnJavaType);
 				}
-				
-				return null;
 			} finally {
 				mLock.unlock();
 			}
+            return null;
 		}
 	}
 

@@ -102,6 +102,8 @@ public abstract class JsonRpcConnection {
         }
 
         mClient = client;
+
+        mClient.bindConnection(this);
     }
 
 
