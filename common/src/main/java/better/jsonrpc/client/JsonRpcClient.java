@@ -145,7 +145,9 @@ public class JsonRpcClient {
      */
     public void sendRequest(JsonRpcConnection connection, ObjectNode request) throws Exception {
         // log request
-        LOG.info("sending request " + request.toString());
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.fine("sending request " + request.toString());
+        }
         // send it
         connection.sendRequest(request);
     }
@@ -155,7 +157,9 @@ public class JsonRpcClient {
      */
     public void sendNotification(JsonRpcConnection connection, ObjectNode notification) throws Exception {
         // log notification
-        LOG.info("sending notification " + notification.toString());
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.fine("sending notification " + notification.toString());
+        }
         // send it
         connection.sendNotification(notification);
     }
@@ -278,7 +282,9 @@ public class JsonRpcClient {
 		if(idNode != null && idNode.isTextual()) {
 			String id = idNode.asText();
             // log response
-            LOG.info("received response " + response.toString());
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.fine("received response " + response.toString());
+            }
             // retrieve the request from the client table
             JsonRpcClientRequest req = null;
             synchronized (mOutstandingRequests) {
@@ -341,11 +347,6 @@ public class JsonRpcClient {
             // other args
         } else if (arguments!=null) {
             request.put("params", mMapper.valueToTree(arguments));
-        }
-
-        // log
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.log(Level.FINE, "JSON-PRC Request: "+request.toString());
         }
 
         // return the request
