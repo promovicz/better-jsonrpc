@@ -1,6 +1,7 @@
 package better.jsonrpc.websocket;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocket.OnTextMessage;
@@ -33,7 +34,9 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 	}
 	
 	public void transmit(String data) {
-		LOG.info("[" + mConnectionId + "] connection transmitting \"" + data + "\"");
+        if(LOG.isLoggable(Level.FINE)) {
+		    LOG.fine("[" + mConnectionId + "] transmitting \"" + data + "\"");
+        }
 		if(mConnection != null && mConnection.isOpen()) {
 			try {
 				mConnection.sendMessage(data);
@@ -45,21 +48,27 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 	
 	@Override
 	public void onOpen(Connection connection) {
-		LOG.info("[" + mConnectionId + "] connection open");
+        if(LOG.isLoggable(Level.INFO)) {
+		    LOG.info("[" + mConnectionId + "] connection open");
+        }
 		super.onOpen();
 		mConnection = connection;
 	}
 	
 	@Override
 	public void onClose(int closeCode, String message) {
-		LOG.info("[" + mConnectionId + "] connection close " + closeCode + "/" + message);
+        if(LOG.isLoggable(Level.INFO)) {
+		    LOG.info("[" + mConnectionId + "] connection close " + closeCode + "/" + message);
+        }
 		super.onClose();
 		mConnection = null;
 	}
 	
 	@Override
 	public void onMessage(String data) {
-		LOG.info("[" + mConnectionId + "] connection received message \"" + data + "\"");
+        if(LOG.isLoggable(Level.FINE)) {
+		    LOG.fine("[" + mConnectionId + "] received \"" + data + "\"");
+        }
 		try {
 			JsonNode message = getServer().getMapper().readTree(data);
 			if(message.isObject()) {
