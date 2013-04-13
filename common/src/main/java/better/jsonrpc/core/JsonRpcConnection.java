@@ -81,10 +81,12 @@ public abstract class JsonRpcConnection {
     }
 
 
+    /** Returns true if this connection has a client bound to it */
     public boolean isClient() {
         return mClient != null;
     }
 
+    /** Gets the client if there is one (throws otherwise!) */
     public JsonRpcClient getClient() {
         if(mClient == null) {
             throw new RuntimeException("Connection not configured for client mode");
@@ -92,6 +94,7 @@ public abstract class JsonRpcConnection {
         return mClient;
     }
 
+    /** Bind the given client to this connection */
     public void bindClient(JsonRpcClient client) {
         if(mClient != null) {
             throw new RuntimeException("Connection already has a client");
@@ -107,10 +110,12 @@ public abstract class JsonRpcConnection {
     }
 
 
+    /** Returns true if this connection has a server bound to it */
     public boolean isServer() {
         return mServer != null;
     }
 
+    /** Gets the server if there is one (throws otherwise!) */
     public JsonRpcServer getServer() {
         if(mServer == null) {
             throw new RuntimeException("Connection not configured for server mode");
@@ -118,6 +123,7 @@ public abstract class JsonRpcConnection {
         return mServer;
     }
 
+    /** Bind the given server to this connection */
     public void bindServer(JsonRpcServer server, Object handler) {
         if(mServer != null) {
             throw new RuntimeException("Connection already has a server");
@@ -132,19 +138,30 @@ public abstract class JsonRpcConnection {
     }
 
 
-	public void addListener(Listener l) {
-		mListeners.add(l);
-	}
-	
-	public void removeListener(Listener l) {
-		mListeners.remove(l);
-	}
-	
+    /** Returns true if the connection is currently connected */
 	abstract public boolean isConnected();
+    /** Sends a request through the connection */
 	abstract public void sendRequest(ObjectNode request) throws Exception;
+    /** Sends a response through the connection */
 	abstract public void sendResponse(ObjectNode response) throws Exception;
+    /** Sends a notification through the connection */
 	abstract public void sendNotification(ObjectNode notification) throws Exception;
-	
+
+    /** Dispatch connection open event (for subclasses to call) */
+    protected void onOpen() {
+        for(Listener l: mListeners) {
+            l.onOpen(this);
+        }
+    }
+
+    /** Dispatch connection close event (for subclasses to call) */
+    protected void onClose() {
+        for(Listener l: mListeners) {
+            l.onClose(this);
+        }
+    }
+
+    /** Dispatch an incoming request (for subclasses to call) */
 	public void handleRequest(ObjectNode request) {
 		if(mServer != null) {
             try {
@@ -154,13 +171,15 @@ public abstract class JsonRpcConnection {
             }
         }
 	}
-	
+
+    /** Dispatch an incoming response (for subclasses to call) */
 	public void handleResponse(ObjectNode response) {
 		if(mClient != null) {
 			mClient.handleResponse(response, this);
 		}
 	}
-	
+
+    /** Dispatch an incoming notification (for subclasses to call) */
 	public void handleNotification(ObjectNode notification) {
 		if(mServer != null) {
             try {
@@ -170,22 +189,27 @@ public abstract class JsonRpcConnection {
             }
         }
 	}
-	
+
+    /** Interface of connection state listeners */
 	public interface Listener {
 		public void onOpen(JsonRpcConnection connection);
 		public void onClose(JsonRpcConnection connection);
     }
-	
-	public void onOpen() {
-		for(Listener l: mListeners) {
-			l.onOpen(this);
-		}
-	}
-	
-	public void onClose() {
-		for(Listener l: mListeners) {
-			l.onClose(this);
-		}
-	}
+
+    /**
+     * Add a connection state listener
+     * @param l
+     */
+    public void addListener(Listener l) {
+        mListeners.add(l);
+    }
+
+    /**
+     * Remove the given connection state listener
+     * @param l
+     */
+    public void removeListener(Listener l) {
+        mListeners.remove(l);
+    }
 	
 }
