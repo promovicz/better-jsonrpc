@@ -2,11 +2,6 @@ package better.jsonrpc.client;
 
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,12 +9,9 @@ import better.jsonrpc.core.JsonRpcConnection;
 import better.jsonrpc.exceptions.DefaultExceptionResolver;
 import better.jsonrpc.exceptions.ExceptionResolver;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 
 /**
  * A JSON-RPC client.
@@ -49,8 +41,8 @@ public class JsonRpcClient {
 	private ExceptionResolver mExceptionResolver = DefaultExceptionResolver.INSTANCE;
 
     /** Table of outstanding requests */
-    private Hashtable<String, Request> mOutstandingRequests =
-            new Hashtable<String, Request>();
+    private Hashtable<String, JsonRpcClientRequest> mOutstandingRequests =
+            new Hashtable<String, JsonRpcClientRequest>();
 
     /** Listener for connection state changes */
     private JsonRpcConnection.Listener mConnectionListener =
@@ -102,13 +94,29 @@ public class JsonRpcClient {
     }
 
     /**
+     * Set the {@link ExceptionResolver} for this client
      * @param mExceptionResolver the exceptionResolver to set
      */
     public void setExceptionResolver(ExceptionResolver mExceptionResolver) {
         this.mExceptionResolver = mExceptionResolver;
     }
 
+    /**
+     * Get request timeout (in msecs)
+     */
+    public long getRequestTimeout() {
+        return mRequestTimeout;
+    }
 
+    /**
+     * Set request timeout (in msecs)
+     * @param mRequestTimeout
+     */
+    public void setRequestTimeout(long mRequestTimeout) {
+        this.mRequestTimeout = mRequestTimeout;
+    }
+
+    
     /**
      * Generate a new request id and return it
      * @return
@@ -162,11 +170,11 @@ public class JsonRpcClient {
     private void handleConnectionChange(JsonRpcConnection connection) {
         synchronized (mOutstandingRequests) {
             // vector to collect matched requests into
-            Vector<Request> matches = new Vector<Request>();
+            Vector<JsonRpcClientRequest> matches = new Vector<JsonRpcClientRequest>();
             // for every outstanding request
-            Enumeration<Request> reqs = mOutstandingRequests.elements();
+            Enumeration<JsonRpcClientRequest> reqs = mOutstandingRequests.elements();
             while(reqs.hasMoreElements()) {
-                Request req = reqs.nextElement();
+                JsonRpcClientRequest req = reqs.nextElement();
                 // if the request belongs to the changed connection
                 if(req.getConnection() == connection) {
                     // unblock the requestor
@@ -176,7 +184,7 @@ public class JsonRpcClient {
                 }
             }
             // for all relevant requests
-            for(Request req: matches) {
+            for(JsonRpcClientRequest req: matches) {
                 // remove request from table
                 mOutstandingRequests.remove(req.getId());
             }
@@ -205,7 +213,7 @@ public class JsonRpcClient {
         // construct the JSON request node
         ObjectNode requestNode = createRequest(methodName, arguments, id);
         // construct the request state object
-        Request request = new Request(id, requestNode, connection);
+        JsonRpcClientRequest request = new JsonRpcClientRequest(id, requestNode, connection);
         // add the request to client state
         synchronized (mOutstandingRequests) {
             mOutstandingRequests.put(id, request);
@@ -245,7 +253,7 @@ public class JsonRpcClient {
         // create the JSON request object
 		ObjectNode requestNode = createRequest(methodName, arguments, null);
         // create client request object
-        Request request = new Request(null, requestNode, connection);
+        JsonRpcClientRequest request = new JsonRpcClientRequest(null, requestNode, connection);
         // execute the request
         try {
             // send request
@@ -272,7 +280,7 @@ public class JsonRpcClient {
             // log response
             LOG.info("received response " + response.toString());
             // retrieve the request from the client table
-			Request req = null;
+            JsonRpcClientRequest req = null;
             synchronized (mOutstandingRequests) {
                 req = mOutstandingRequests.get(id);
             }
@@ -343,124 +351,5 @@ public class JsonRpcClient {
         // return the request
         return request;
     }
-	
-	private class Request {
-		Lock mLock;
-		Condition mCondition;
-		String mId;
-        boolean mDisconnected;
-        Throwable mException;
-		ObjectNode mRequest;
-		ObjectNode mResponse;
-		JsonRpcConnection mConnection;
-		public Request(String id, ObjectNode request, JsonRpcConnection connection) {
-			mLock = new ReentrantLock();
-			mCondition = mLock.newCondition();
-			mId = id;
-			mRequest = request;
-			mResponse = null;
-			mConnection = connection;
-		}
-        public String getId() {
-            return mId;
-        }
-		public JsonRpcConnection getConnection() {
-			return mConnection;
-		}
-        private boolean isDone() {
-            return mDisconnected || mResponse != null || mException != null;
-        }
-        public void handleDisconnect() {
-            mLock.lock();
-            try {
-                if(!isDone()) {
-                    mDisconnected = true;
-                }
-            } finally {
-                mLock.unlock();
-            }
-        }
-		public void handleException(Throwable exception) {
-			mLock.lock();
-			try {
-                if(!isDone()) {
-                    mException = exception;
-                    mCondition.signalAll();
-                }
-			} finally {
-				mLock.unlock();
-			}
-		}
-		public void handleResponse(ObjectNode response) {
-			mLock.lock();
-			try {
-				if(!isDone()) {
-					mResponse = response;
-					mCondition.signalAll();
-				}
-			} finally {
-				mLock.unlock();
-			}
-		}
-		public Object waitForResponse(Type returnType) throws Throwable {
-			mLock.lock();
-			try {
-				// wait until done or timeout is reached
-                long timeout = System.currentTimeMillis() + mRequestTimeout;
-                while(!isDone()) {
-                    long timeLeft = timeout - System.currentTimeMillis();
-                    if(timeLeft <= 0) {
-                        throw new TimeoutException("JSON-RPC timeout");
-                    }
-					try {
-						mCondition.await(timeLeft, TimeUnit.MILLISECONDS);
-					} catch (InterruptedException e) {
-					}
-				}
-
-                // throw if we got disconnected
-                if (mDisconnected) {
-                    throw new RuntimeException("JSON-RPC disconnect");
-                }
-				
-				// detect rpc failures
-				if (mException != null) {
-                    throw new RuntimeException("JSON-RPC failure", mException);
-				}
-				
-				// detect errors
-				if (mResponse.has("error")
-					&& mResponse.get("error")!=null
-					&& !mResponse.get("error").isNull()) {
-
-					// resolve and throw the exception
-					if (mExceptionResolver == null) {
-						throw DefaultExceptionResolver.INSTANCE.resolveException(mResponse);
-					} else {
-						throw mExceptionResolver.resolveException(mResponse);
-					}
-				}
-				
-				// convert it to a return object
-				if (mResponse.has("result")
-					&& !mResponse.get("result").isNull()
-					&& mResponse.get("result")!=null) {
-					if (returnType==null) {
-						LOG.warning(
-                                "Server returned result but returnType is null");
-						return null;
-					}
-					
-					JsonParser returnJsonParser = mMapper.treeAsTokens(mResponse.get("result"));
-					JavaType returnJavaType = TypeFactory.defaultInstance().constructType(returnType);
-					
-					return mMapper.readValue(returnJsonParser, returnJavaType);
-				}
-			} finally {
-				mLock.unlock();
-			}
-            return null;
-		}
-	}
 
 }
