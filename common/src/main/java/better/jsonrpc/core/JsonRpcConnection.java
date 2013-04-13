@@ -1,5 +1,6 @@
 package better.jsonrpc.core;
 
+import java.io.IOException;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -138,14 +139,18 @@ public abstract class JsonRpcConnection {
 	}
 	
 	abstract public boolean isConnected();
-	abstract public void sendRequest(ObjectNode request);
-	abstract public void sendResponse(ObjectNode response);
-	abstract public void sendNotification(ObjectNode notification);
+	abstract public void sendRequest(ObjectNode request) throws Exception;
+	abstract public void sendResponse(ObjectNode response) throws Exception;
+	abstract public void sendNotification(ObjectNode notification) throws Exception;
 	
 	public void handleRequest(ObjectNode request) {
 		if(mServer != null) {
-			mServer.handleRequest(mServerHandler, request, this);
-		}
+            try {
+                mServer.handleRequest(mServerHandler, request, this);
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        }
 	}
 	
 	public void handleResponse(ObjectNode response) {
@@ -156,8 +161,12 @@ public abstract class JsonRpcConnection {
 	
 	public void handleNotification(ObjectNode notification) {
 		if(mServer != null) {
-			mServer.handleRequest(mServerHandler, notification, this);
-		}
+            try {
+                mServer.handleRequest(mServerHandler, notification, this);
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        }
 	}
 	
 	public interface Listener {

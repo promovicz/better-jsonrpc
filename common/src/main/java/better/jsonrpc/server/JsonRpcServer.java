@@ -102,7 +102,7 @@ public class JsonRpcServer {
 	 * @param ops the {@link OutputStream}
 	 * @throws IOException on error
 	 */
-	public void handleRequest(Object handler, ObjectNode node, JsonRpcConnection connection) {
+	public void handleRequest(Object handler, ObjectNode node, JsonRpcConnection connection) throws Throwable {
 		if (LOG.isLoggable(Level.FINE)) {
 			LOG.log(Level.FINE, "Request: " + node.toString());
 		}

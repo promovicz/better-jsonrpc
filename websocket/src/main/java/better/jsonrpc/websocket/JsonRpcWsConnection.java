@@ -33,19 +33,15 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 		}
 	}
 	
-	public void transmit(String data) {
+	public void transmit(String data) throws IOException {
         if(LOG.isLoggable(Level.FINE)) {
 		    LOG.fine("[" + mConnectionId + "] transmitting \"" + data + "\"");
         }
 		if(mConnection != null && mConnection.isOpen()) {
-			try {
-				mConnection.sendMessage(data);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			mConnection.sendMessage(data);
 		}
 	}
-	
+
 	@Override
 	public void onOpen(Connection connection) {
         if(LOG.isLoggable(Level.INFO)) {
@@ -54,7 +50,7 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 		super.onOpen();
 		mConnection = connection;
 	}
-	
+
 	@Override
 	public void onClose(int closeCode, String message) {
         if(LOG.isLoggable(Level.INFO)) {
@@ -99,17 +95,17 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 	}
 	
 	@Override
-	public void sendRequest(ObjectNode request) {
+	public void sendRequest(ObjectNode request) throws IOException {
 		transmit(request.toString());
 	}
 
 	@Override
-	public void sendResponse(ObjectNode response) {
+	public void sendResponse(ObjectNode response) throws IOException {
 		transmit(response.toString());
 	}
 	
 	@Override
-	public void sendNotification(ObjectNode notification) {
+	public void sendNotification(ObjectNode notification) throws IOException {
 		transmit(notification.toString());
 	}
 	
