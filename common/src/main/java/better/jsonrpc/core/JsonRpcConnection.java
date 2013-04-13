@@ -2,6 +2,7 @@ package better.jsonrpc.core;
 
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import better.jsonrpc.client.JsonRpcClient;
@@ -95,6 +96,10 @@ public abstract class JsonRpcConnection {
             throw new RuntimeException("Connection already has a client");
         }
 
+        if(LOG.isLoggable(Level.FINE)) {
+            LOG.fine("[" + mConnectionId + "] binding client");
+        }
+
         mClient = client;
     }
 
@@ -113,6 +118,10 @@ public abstract class JsonRpcConnection {
     public void bindServer(JsonRpcServer server, Object handler) {
         if(mServer != null) {
             throw new RuntimeException("Connection already has a server");
+        }
+
+        if(LOG.isLoggable(Level.FINE)) {
+            LOG.fine("[" + mConnectionId + "] binding server");
         }
 
         mServer = server;
