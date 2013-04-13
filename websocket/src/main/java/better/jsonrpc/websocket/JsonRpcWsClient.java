@@ -2,6 +2,8 @@ package better.jsonrpc.websocket;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocket.OnTextMessage;
@@ -33,12 +35,16 @@ public class JsonRpcWsClient extends JsonRpcWsConnection
 		mClient = mClientFactory.newWebSocketClient();
 	}
 	
-	public void connect() {
-		try {
-			mClient.open(mServiceUri, this);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void connect() throws IOException {
+		mClient.open(mServiceUri, this);
 	}
+
+    public void connect(long maxWait, TimeUnit maxWaitUnit) throws TimeoutException, IOException {
+        try {
+            mClient.open(mServiceUri, this, maxWait, maxWaitUnit);
+        } catch (InterruptedException e) {
+            // ignore
+        }
+    }
 
 }
