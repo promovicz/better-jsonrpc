@@ -12,26 +12,81 @@ import better.jsonrpc.server.JsonRpcServer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+/**
+ * JSON-RPC connections
+ *
+ * These objects represent a single, possibly virtual,
+ * connection between JSON-RPC speakers.
+ *
+ * Depending on the transport type, a connection can
+ * be used as an RPC server and/or client. Notifications
+ * may or may not be supported in either direction.
+ *
+ */
 public abstract class JsonRpcConnection {
 
+    /** Global logger, may be used by subclasses */
 	protected static final Logger log = Logger.getLogger(JsonRpcConnection.class.getSimpleName());
-	
+
+    /** Global counter for connection IDs */
 	private static final AtomicInteger sConnectionIdCounter = new AtomicInteger();
-	
+
+
+    /** Automatically assign connections an ID for debugging and other purposes */
 	protected final int mConnectionId = sConnectionIdCounter.incrementAndGet(); 
-	
-	protected ObjectMapper mMapper;
-		
+
+
+    /**
+     * Server instance attached to this client
+     *
+     * This object is responsible for handling requests and notifications.
+     *
+     * It will also send responses where appropriate.
+     */
 	JsonRpcServer mServer;
+
+    /**
+     * Client instance attached to this client
+     *
+     * This object is responsible for handling responses.
+     *
+     * It will send requests and notifications where appropriate.
+     */
 	JsonRpcClient mClient;
-	
+
+    /**
+     * Handler instance for this client
+     *
+     * RPC calls will be dispatched to this through the server.
+     *
+     * XXX this should be part of the server instance
+     */
 	Object mHandler;
-	
+
+
+    /** Connection listeners */
 	Vector<Listener> mListeners = new Vector<Listener>();
-	
+
+    /** Object mapper to be used for mapping JSON */
+    protected ObjectMapper mMapper;
+
+
+    /**
+     * Main constructor
+     *
+     * @param mapper to be used for mapping JSON
+     */
 	public JsonRpcConnection(ObjectMapper mapper) {
 		mMapper = mapper;
 	}
+
+    /**
+     * Get the numeric local connection ID
+     * @return
+     */
+    public int getConnectionId() {
+        return mConnectionId;
+    }
 	
 	public JsonRpcClient getClient() {
 		if(mClient == null) {
