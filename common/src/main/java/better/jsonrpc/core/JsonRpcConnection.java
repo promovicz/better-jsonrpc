@@ -1,7 +1,5 @@
 package better.jsonrpc.core;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
@@ -58,26 +56,18 @@ public abstract class JsonRpcConnection {
      * Handler instance for this client
      *
      * RPC calls will be dispatched to this through the server.
-     *
-     * XXX this should be part of the server instance
      */
-	Object mHandler;
+	Object mServerHandler;
 
 
     /** Connection listeners */
 	Vector<Listener> mListeners = new Vector<Listener>();
 
-    /** Object mapper to be used for mapping JSON */
-    protected ObjectMapper mMapper;
-
 
     /**
      * Main constructor
-     *
-     * @param mapper to be used for mapping JSON
      */
-	public JsonRpcConnection(ObjectMapper mapper) {
-		mMapper = mapper;
+	public JsonRpcConnection() {
 	}
 
     /**
@@ -87,26 +77,49 @@ public abstract class JsonRpcConnection {
     public int getConnectionId() {
         return mConnectionId;
     }
-	
-	public JsonRpcClient getClient() {
-		if(mClient == null) {
-			mClient = new JsonRpcClient(mMapper);
-		}
-		return mClient;
-	}
-	
-	public void setHandler(Object handler) {
-		mHandler = handler;
-	}
-	
-	public void setServer(JsonRpcServer server) {
-		mServer = server;
-	}
-	
-	public JsonRpcServer getServer(Class<?> remoteInterface) {
-		return mServer;
-	}
-	
+
+
+    public boolean isClient() {
+        return mClient != null;
+    }
+
+    public JsonRpcClient getClient() {
+        if(mClient == null) {
+            throw new RuntimeException("Connection not configured for client mode");
+        }
+        return mClient;
+    }
+
+    public void bindClient(JsonRpcClient client) {
+        if(mClient != null) {
+            throw new RuntimeException("Connection already has a client");
+        }
+
+        mClient = client;
+    }
+
+
+    public boolean isServer() {
+        return mServer != null;
+    }
+
+    public JsonRpcServer getServer() {
+        if(mServer == null) {
+            throw new RuntimeException("Connection not configured for server mode");
+        }
+        return mServer;
+    }
+
+    public void bindServer(JsonRpcServer server, Object handler) {
+        if(mServer != null) {
+            throw new RuntimeException("Connection already has a server");
+        }
+
+        mServer = server;
+        mServerHandler = handler;
+    }
+
+
 	public void addListener(Listener l) {
 		mListeners.add(l);
 	}
@@ -122,7 +135,7 @@ public abstract class JsonRpcConnection {
 	
 	public void handleRequest(ObjectNode request) {
 		if(mServer != null) {
-			mServer.handleRequest(mHandler, request, this);
+			mServer.handleRequest(mServerHandler, request, this);
 		}
 	}
 	
@@ -134,7 +147,7 @@ public abstract class JsonRpcConnection {
 	
 	public void handleNotification(ObjectNode notification) {
 		if(mServer != null) {
-			mServer.handleRequest(mHandler, notification, this);
+			mServer.handleRequest(mServerHandler, notification, this);
 		}
 	}
 	

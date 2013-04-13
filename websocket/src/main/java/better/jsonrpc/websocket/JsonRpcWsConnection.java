@@ -7,7 +7,6 @@ import org.eclipse.jetty.websocket.WebSocket.OnTextMessage;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import better.jsonrpc.core.JsonRpcConnection;
@@ -18,8 +17,8 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 	/** Currently active websocket connection */
 	private Connection mConnection;
 	
-	public JsonRpcWsConnection(ObjectMapper mapper) {
-		super(mapper);
+	public JsonRpcWsConnection() {
+		super();
 	}
 	
 	@Override
@@ -62,7 +61,7 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 	public void onMessage(String data) {
 		log.info("[" + mConnectionId + "] connection received message \"" + data + "\"");
 		try {
-			JsonNode message = mMapper.readTree(data);
+			JsonNode message = getServer().getMapper().readTree(data);
 			if(message.isObject()) {
 				ObjectNode messageObj = ObjectNode.class.cast(message);
 				

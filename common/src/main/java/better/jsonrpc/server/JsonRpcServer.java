@@ -78,6 +78,14 @@ public class JsonRpcServer {
 		this(new ObjectMapper(), new Class<?>[] { remoteInterface });
 	}
 
+    /**
+     * Returns the mapper used for mapping to and from JSON
+     * @return
+     */
+    public ObjectMapper getMapper() {
+        return mapper;
+    }
+
 	/**
 	 * Returns the handler's class or interfaces.
 	 *

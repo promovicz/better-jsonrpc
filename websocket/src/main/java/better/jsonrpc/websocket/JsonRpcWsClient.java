@@ -25,9 +25,8 @@ public class JsonRpcWsClient extends JsonRpcWsConnection
 	
 	public JsonRpcWsClient(
 			WebSocketClientFactory factory,
-			ObjectMapper mapper,
 			URI serviceUri) {
-		super(mapper);
+		super();
 		
 		mClientFactory = factory;
 		mServiceUri = serviceUri;
