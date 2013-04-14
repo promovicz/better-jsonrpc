@@ -214,6 +214,10 @@ public class JsonRpcClient {
         Object result = null;
         // generate request id
         String id = generateId();
+        // log about call
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.fine("[" + id + "] calling " + methodName);
+        }
         // construct the JSON request node
         ObjectNode requestNode = createRequest(methodName, arguments, id);
         // construct the request state object
@@ -229,6 +233,10 @@ public class JsonRpcClient {
             // wait for response or other result
             result = request.waitForResponse(returnType);
         } catch (Throwable t) {
+            // log about exception
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.log(Level.FINE, "[" + id + "] call to " + methodName + " throws", t);
+            }
             // abort the request
             request.handleException(t);
             // rethrow for library user to handle
@@ -238,6 +246,10 @@ public class JsonRpcClient {
             synchronized (mOutstandingRequests) {
                 mOutstandingRequests.remove(id);
             }
+        }
+        // log about return
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.fine("[" + id + "] returning from " + methodName);
         }
         // return final result
         return result;
@@ -254,6 +266,10 @@ public class JsonRpcClient {
      */
 	public void invokeNotification(String methodName, Object arguments, JsonRpcConnection connection)
         throws Throwable {
+        // log about call
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.fine("[notification] calling " + methodName);
+        }
         // create the JSON request object
 		ObjectNode requestNode = createRequest(methodName, arguments, null);
         // create client request object
@@ -263,10 +279,18 @@ public class JsonRpcClient {
             // send request
 		    sendNotification(connection, requestNode);
         } catch (Throwable t) {
+            // log about exception
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.log(Level.FINE, "[notification] call to " + methodName + " throws", t);
+            }
             // abort the request
             request.handleException(t);
-            //
+            // rethrow
             throw t;
+        }
+        // log about return
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.fine("[notification] returning from " + methodName);
         }
 	}
 
