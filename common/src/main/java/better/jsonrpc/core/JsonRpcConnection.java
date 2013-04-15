@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import better.jsonrpc.client.JsonRpcClient;
 import better.jsonrpc.server.JsonRpcServer;
 
+import better.jsonrpc.util.ProxyUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -107,6 +108,11 @@ public abstract class JsonRpcConnection {
         mClient = client;
 
         mClient.bindConnection(this);
+    }
+
+    /** Create and return a client proxy */
+    public Object makeProxy(Class<?> clazz) {
+        return ProxyUtil.createClientProxy(clazz.getClassLoader(), clazz, this);
     }
 
 
