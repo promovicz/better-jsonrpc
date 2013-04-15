@@ -12,12 +12,14 @@
     <module>annotations</module>
     <module>common</module>
     <module>websocket</module>
+	<module>tool</module>
   </modules>
 
   <properties>
     <java.version>1.6</java.version>
     <jackson.version>2.0.2</jackson.version>
     <jetty.version>8.1.7.v20120910</jetty.version>
+    <jcommander.version>1.30</jcommander.version>
   </properties>
   
 </project>
