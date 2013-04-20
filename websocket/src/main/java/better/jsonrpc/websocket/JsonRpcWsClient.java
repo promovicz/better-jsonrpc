@@ -34,7 +34,11 @@ public class JsonRpcWsClient extends JsonRpcWsConnection
 		
 		mClient = mClientFactory.newWebSocketClient();
 	}
-	
+
+    public WebSocketClient getWebSocketClient() {
+        return mClient;
+    }
+
 	public void connect() throws IOException {
         if(LOG.isLoggable(Level.INFO)) {
             LOG.info("[" + mConnectionId + "] connecting");
