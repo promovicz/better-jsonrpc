@@ -35,13 +35,11 @@ public class SimpleTest {
 
         // create the server
         SimpleRpcServer serverHandler = new SimpleRpcServer();
-        ObjectMapper serverMapper = new ObjectMapper();
-        server = new JsonRpcServer(serverMapper, ISimpleServer.class);
+        server = new JsonRpcServer(ISimpleServer.class);
         connectionA.bindServer(server, serverHandler);
 
         // create the client
-        ObjectMapper clientMapper = new ObjectMapper();
-        client = new JsonRpcClient(clientMapper);
+        client = new JsonRpcClient();
         connectionB.bindClient(client);
         proxy = (ISimpleServer)connectionB.makeProxy(ISimpleServer.class);
     }
