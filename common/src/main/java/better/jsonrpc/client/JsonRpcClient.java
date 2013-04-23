@@ -2,6 +2,7 @@ package better.jsonrpc.client;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,7 +36,7 @@ public class JsonRpcClient {
 	private ObjectMapper mMapper;
 
     /** Generator for request IDs */
-	private Random mIdGenerator;
+	private AtomicInteger mIdGenerator;
 
     /** Exception converter */
 	private ExceptionResolver mExceptionResolver = DefaultExceptionResolver.INSTANCE;
@@ -73,7 +74,7 @@ public class JsonRpcClient {
 	 */
 	public JsonRpcClient(ObjectMapper mapper) {
 		this.mMapper = mapper;
-		this.mIdGenerator = new Random(System.currentTimeMillis());
+		this.mIdGenerator = new AtomicInteger(0);
 	}
 
 
@@ -122,7 +123,7 @@ public class JsonRpcClient {
      * @return
      */
     private String generateId() {
-        return mIdGenerator.nextLong()+"";
+        return Integer.toHexString(mIdGenerator.incrementAndGet());
     }
 
 
