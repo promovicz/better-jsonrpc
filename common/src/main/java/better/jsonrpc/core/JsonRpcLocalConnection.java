@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Local connections that pass JSON structures directly
  *
- * Intended for testing,
+ * Intended for testing.
  */
 public class JsonRpcLocalConnection extends JsonRpcConnection {
 
