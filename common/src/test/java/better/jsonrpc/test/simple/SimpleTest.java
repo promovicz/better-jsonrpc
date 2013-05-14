@@ -1,6 +1,9 @@
 package better.jsonrpc.test.simple;
 
 import better.jsonrpc.client.JsonRpcClient;
+import better.jsonrpc.client.JsonRpcClientException;
+import better.jsonrpc.client.JsonRpcClientTimeout;
+import better.jsonrpc.core.JsonRpcExecutorConnection;
 import better.jsonrpc.core.JsonRpcLocalConnection;
 import better.jsonrpc.server.JsonRpcServer;
 import better.jsonrpc.test.simple.model.SimpleAddress;
@@ -13,6 +16,8 @@ import org.junit.Test;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * A simple functional test of the whole library in default configuration
@@ -29,7 +34,7 @@ public class SimpleTest {
 
     static {
         // create a pair of local connections
-        List<JsonRpcLocalConnection> connections = JsonRpcLocalConnection.createConnectedPair();
+        List<JsonRpcExecutorConnection> connections = JsonRpcExecutorConnection.createExecutorConnectionPair();
         connectionA = connections.get(0);
         connectionB = connections.get(1);
 
@@ -40,6 +45,7 @@ public class SimpleTest {
 
         // create the client
         client = new JsonRpcClient();
+        client.setRequestTimeout(500);
         connectionB.bindClient(client);
         proxy = (ISimpleServer)connectionB.makeProxy(ISimpleServer.class);
     }
@@ -96,6 +102,11 @@ public class SimpleTest {
         person.setAddress(address);
         SimpleAddress result = proxy.extractAddress(person);
         Assert.assertTrue(address.equals(result));
+    }
+
+    @Test(expected = JsonRpcClientTimeout.class)
+    public void testTimeout() {
+        proxy.timeout(5000);
     }
 
 }

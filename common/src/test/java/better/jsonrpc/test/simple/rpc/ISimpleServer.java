@@ -20,6 +20,8 @@ public interface ISimpleServer {
 
     void throwException() throws Exception;
 
+    void timeout(long msecsToBlock);
+
     SimpleAddress extractAddress(SimplePerson person);
 
 }

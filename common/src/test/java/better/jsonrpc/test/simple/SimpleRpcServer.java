@@ -47,6 +47,19 @@ public class SimpleRpcServer implements ISimpleServer {
     }
 
     @Override
+    public void timeout(long msecsToBlock) {
+        long now = System.currentTimeMillis();
+        long end = now + msecsToBlock;
+        while (now < end) {
+            try {
+                Thread.sleep(end - now);
+            } catch (InterruptedException e) {
+            }
+            now = System.currentTimeMillis();
+        }
+    }
+
+    @Override
     public SimpleAddress extractAddress(SimplePerson person) {
         return person.getAddress();
     }
