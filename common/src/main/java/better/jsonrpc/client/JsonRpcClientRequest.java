@@ -133,7 +133,7 @@ public class JsonRpcClientRequest {
                 long timeLeft = timeout - System.currentTimeMillis();
                 // throw on timeout
                 if (timeLeft <= 0) {
-                    throw new TimeoutException("JSON-RPC timeout");
+                    throw new JsonRpcClientTimeout();
                 }
                 // wait for state changes
                 try {
