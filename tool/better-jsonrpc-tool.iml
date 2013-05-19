@@ -17,9 +17,9 @@
     <orderEntry type="library" name="Maven: com.beust:jcommander:1.30" level="project" />
     <orderEntry type="module" module-name="better-jsonrpc-common" />
     <orderEntry type="module" module-name="better-jsonrpc-annotations" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.0.2" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.0.2" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.0.2" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.2.1" level="project" />
     <orderEntry type="module" module-name="better-jsonrpc-websocket" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-websocket:8.1.10.v20130312" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:8.1.10.v20130312" level="project" />
