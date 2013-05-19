@@ -10,6 +10,7 @@ import better.jsonrpc.client.JsonRpcClient;
 import better.jsonrpc.server.JsonRpcServer;
 
 import better.jsonrpc.util.ProxyUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
@@ -65,12 +66,16 @@ public abstract class JsonRpcConnection {
     /** Connection listeners */
 	Vector<Listener> mListeners = new Vector<Listener>();
 
+    /** Object mapper */
+    ObjectMapper mMapper;
+
 
     /**
      * Main constructor
      */
-	public JsonRpcConnection() {
-	}
+    public JsonRpcConnection(ObjectMapper mapper) {
+        mMapper = mapper;
+    }
 
     /**
      * Get the numeric local connection ID
@@ -80,6 +85,9 @@ public abstract class JsonRpcConnection {
         return mConnectionId;
     }
 
+    public ObjectMapper getMapper() {
+        return mMapper;
+    }
 
     /** Returns true if this connection has a client bound to it */
     public boolean isClient() {

@@ -56,35 +56,15 @@ public class JsonRpcServer {
 	private boolean allowExtraParams 		= false;
 	private boolean allowLessParams			= false;
 	private ErrorResolver errorResolver	= null;
-	private ObjectMapper mapper;
 	private Class<?>[] remoteInterfaces;
 
-	public JsonRpcServer(
-		ObjectMapper mapper, Class<?>[] remoteInterfaces) {
-		this.mapper				= mapper;
+	public JsonRpcServer(Class<?>[] remoteInterfaces) {
 		this.remoteInterfaces	= remoteInterfaces;
 	}
 	
-	public JsonRpcServer(
-			ObjectMapper mapper, Class<?> remoteInterface) {
-		this(mapper, new Class<?>[] { remoteInterface });
-	}
-
-	public JsonRpcServer(Class<?>[] remoteInterfaces) {
-		this(new ObjectMapper(), remoteInterfaces);
-	}
-	
 	public JsonRpcServer(Class<?> remoteInterface) {
-		this(new ObjectMapper(), new Class<?>[] { remoteInterface });
+		this(new Class<?>[] { remoteInterface });
 	}
-
-    /**
-     * Returns the mapper used for mapping to and from JSON
-     * @return
-     */
-    public ObjectMapper getMapper() {
-        return mapper;
-    }
 
 	/**
 	 * Returns the handler's class or interfaces.
@@ -99,10 +79,11 @@ public class JsonRpcServer {
 	 * Handles the given {@link ObjectNode}.
 	 *
 	 * @param node the {@link JsonNode}
-	 * @param ops the {@link OutputStream}
 	 * @throws IOException on error
 	 */
 	public void handleRequest(Object handler, ObjectNode node, JsonRpcConnection connection) throws Throwable {
+        ObjectMapper mapper = connection.getMapper();
+
 		if (LOG.isLoggable(Level.FINE)) {
 			LOG.log(Level.FINE, "Request: " + node.toString());
 		}
@@ -153,7 +134,7 @@ public class JsonRpcServer {
 		JsonNode result = null;
 		Throwable thrown = null;
 		try {
-			result = invoke(handler, methodArgs.method, methodArgs.arguments);
+			result = invoke(handler, methodArgs.method, methodArgs.arguments, mapper);
 		} catch (Throwable e) {
 			thrown = e;
 		}
@@ -228,7 +209,7 @@ public class JsonRpcServer {
 	 * @throws IllegalAccessException on error
 	 * @throws InvocationTargetException on error
 	 */
-	protected JsonNode invoke(Object handler, Method m, List<JsonNode> params)
+	protected JsonNode invoke(Object handler, Method m, List<JsonNode> params, ObjectMapper mapper)
 		throws IOException,
 		IllegalAccessException,
 		InvocationTargetException {

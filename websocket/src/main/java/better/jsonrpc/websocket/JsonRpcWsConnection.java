@@ -3,6 +3,7 @@ package better.jsonrpc.websocket;
 import java.io.IOException;
 import java.util.logging.Level;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocket.OnTextMessage;
 
@@ -12,14 +13,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import better.jsonrpc.core.JsonRpcConnection;
 
-public class JsonRpcWsConnection extends JsonRpcConnection
-	implements WebSocket, OnTextMessage {
+public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket, OnTextMessage {
 	
 	/** Currently active websocket connection */
 	private Connection mConnection;
 	
-	public JsonRpcWsConnection() {
-		super();
+	public JsonRpcWsConnection(ObjectMapper mapper) {
+		super(mapper);
 	}
 	
 	@Override
@@ -66,7 +66,7 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 		    LOG.fine("[" + mConnectionId + "] received \"" + data + "\"");
         }
 		try {
-			JsonNode message = getServer().getMapper().readTree(data);
+			JsonNode message = getMapper().readTree(data);
 			if(message.isObject()) {
 				ObjectNode messageObj = ObjectNode.class.cast(message);
 				

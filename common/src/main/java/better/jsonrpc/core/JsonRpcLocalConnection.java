@@ -1,5 +1,6 @@
 package better.jsonrpc.core;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
@@ -20,9 +21,10 @@ public class JsonRpcLocalConnection extends JsonRpcConnection {
      * @return list containing exactly 2 connections
      */
     public static List<JsonRpcLocalConnection> createConnectedPair() {
+        ObjectMapper mapper = new ObjectMapper();
         List<JsonRpcLocalConnection> res = new ArrayList<JsonRpcLocalConnection>(2);
-        JsonRpcLocalConnection a = new JsonRpcLocalConnection();
-        JsonRpcLocalConnection b = new JsonRpcLocalConnection();
+        JsonRpcLocalConnection a = new JsonRpcLocalConnection(mapper);
+        JsonRpcLocalConnection b = new JsonRpcLocalConnection(mapper);
         a.setOtherConnection(b);
         b.setOtherConnection(a);
         res.add(0, a);
@@ -32,6 +34,10 @@ public class JsonRpcLocalConnection extends JsonRpcConnection {
 
     /** The partner connection of this connection */
     JsonRpcLocalConnection mOtherConnection;
+
+    public JsonRpcLocalConnection(ObjectMapper mapper) {
+        super(mapper);
+    }
 
     /** @return the partner connection of this connection */
     public JsonRpcLocalConnection getOtherConnection() {

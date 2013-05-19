@@ -173,7 +173,7 @@ public class JsonRpcClientRequest {
                     return null;
                 }
                 // get the object mapper for conversion
-                ObjectMapper mapper = mClient.getObjectMapper();
+                ObjectMapper mapper = mConnection.getMapper();
                 // create a parser for the result
                 JsonParser returnJsonParser = mapper.treeAsTokens(mResponse.get("result"));
                 // determine type to convert to

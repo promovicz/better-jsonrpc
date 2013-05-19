@@ -1,5 +1,6 @@
 package better.jsonrpc.core;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.concurrent.Executors;
 public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
 
     public static List<JsonRpcExecutorConnection> createExecutorConnectionPair() {
-        return createExecutorConnectionPair(Executors.newCachedThreadPool());
+        return createExecutorConnectionPair(new ObjectMapper(), Executors.newCachedThreadPool());
     }
 
     /**
@@ -20,10 +21,10 @@ public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
      *
      * @return list containing exactly 2 connections
      */
-    public static List<JsonRpcExecutorConnection> createExecutorConnectionPair(Executor executor) {
+    public static List<JsonRpcExecutorConnection> createExecutorConnectionPair(ObjectMapper mapper, Executor executor) {
         List<JsonRpcExecutorConnection> res = new ArrayList<JsonRpcExecutorConnection>(2);
-        JsonRpcExecutorConnection a = new JsonRpcExecutorConnection(executor);
-        JsonRpcExecutorConnection b = new JsonRpcExecutorConnection(executor);
+        JsonRpcExecutorConnection a = new JsonRpcExecutorConnection(mapper, executor);
+        JsonRpcExecutorConnection b = new JsonRpcExecutorConnection(mapper, executor);
         a.setOtherConnection(b);
         b.setOtherConnection(a);
         res.add(0, a);
@@ -33,11 +34,8 @@ public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
 
     Executor mExecutor;
 
-    public JsonRpcExecutorConnection() {
-        mExecutor = Executors.newCachedThreadPool();
-    }
-
-    public JsonRpcExecutorConnection(Executor executor) {
+    public JsonRpcExecutorConnection(ObjectMapper mapper, Executor executor) {
+        super(mapper);
         mExecutor = executor;
     }
 

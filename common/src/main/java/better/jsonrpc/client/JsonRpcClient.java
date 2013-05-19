@@ -32,9 +32,6 @@ public class JsonRpcClient {
     /** Request timeout for this client (msecs) */
     private long mRequestTimeout = DEFAULT_REQUEST_TIMEOUT;
 
-    /** JSON object mapper being used */
-	private ObjectMapper mMapper;
-
     /** Generator for request IDs */
 	private AtomicInteger mIdGenerator;
 
@@ -58,34 +55,12 @@ public class JsonRpcClient {
                 }
             };
 
-
-    /**
-     * Creates a client that uses the default {@link ObjectMapper}
-     * to map to and from JSON and Java objects.
-     */
-    public JsonRpcClient() {
-        this(new ObjectMapper());
-    }
-
 	/**
-	 * Creates a client that uses the given {@link ObjectMapper} to
-	 * map to and from JSON and Java objects.
-	 * @param mapper the {@link ObjectMapper}
+	 * Creates a client
 	 */
-	public JsonRpcClient(ObjectMapper mapper) {
-		this.mMapper = mapper;
+	public JsonRpcClient() {
 		this.mIdGenerator = new AtomicInteger(0);
 	}
-
-
-    /**
-     * Returns the {@link ObjectMapper} that the client
-     * is using for JSON marshalling.
-     * @return the {@link ObjectMapper}
-     */
-    public ObjectMapper getObjectMapper() {
-        return mMapper;
-    }
 
     /**
      * Returns the {@link ExceptionResolver} for this client
@@ -220,7 +195,7 @@ public class JsonRpcClient {
             LOG.fine("[" + id + "] calling " + methodName);
         }
         // construct the JSON request node
-        ObjectNode requestNode = createRequest(methodName, arguments, id);
+        ObjectNode requestNode = createRequest(methodName, arguments, id, connection);
         // construct the request state object
         JsonRpcClientRequest request = new JsonRpcClientRequest(id, requestNode, connection);
         // add the request to client state
@@ -272,7 +247,7 @@ public class JsonRpcClient {
             LOG.fine("[notification] calling " + methodName);
         }
         // create the JSON request object
-		ObjectNode requestNode = createRequest(methodName, arguments, null);
+		ObjectNode requestNode = createRequest(methodName, arguments, null, connection);
         // create client request object
         JsonRpcClientRequest request = new JsonRpcClientRequest(null, requestNode, connection);
         // execute the request
@@ -335,10 +310,12 @@ public class JsonRpcClient {
      * @return the new request
      */
     private ObjectNode createRequest(
-            String methodName, Object arguments, String id) {
+            String methodName, Object arguments, String id, JsonRpcConnection connection) {
+
+        ObjectMapper mapper = connection.getMapper();
 
         // create the request
-        ObjectNode request = mMapper.createObjectNode();
+        ObjectNode request = mapper.createObjectNode();
 
         // add id
         if (id!=null) { request.put("id", id); }
@@ -348,30 +325,30 @@ public class JsonRpcClient {
         request.put("method", methodName);
 
         // default empty arguments, will be replaced further down
-        request.put("params", mMapper.valueToTree(new Object[0]));
+        request.put("params", mapper.valueToTree(new Object[0]));
 
         // object array args
         if (arguments!=null && arguments.getClass().isArray()) {
             Object[] args = Object[].class.cast(arguments);
             if (args.length>0) {
-                request.put("params", mMapper.valueToTree(Object[].class.cast(arguments)));
+                request.put("params", mapper.valueToTree(Object[].class.cast(arguments)));
             }
 
             // collection args
         } else if (arguments!=null && Collection.class.isInstance(arguments)) {
             if (!Collection.class.cast(arguments).isEmpty()) {
-                request.put("params", mMapper.valueToTree(arguments));
+                request.put("params", mapper.valueToTree(arguments));
             }
 
             // map args
         } else if (arguments!=null && Map.class.isInstance(arguments)) {
             if (!Map.class.cast(arguments).isEmpty()) {
-                request.put("params", mMapper.valueToTree(arguments));
+                request.put("params", mapper.valueToTree(arguments));
             }
 
             // other args
         } else if (arguments!=null) {
-            request.put("params", mMapper.valueToTree(arguments));
+            request.put("params", mapper.valueToTree(arguments));
         }
 
         // return the request

@@ -13,27 +13,45 @@ import org.eclipse.jetty.websocket.WebSocketClientFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class JsonRpcWsClient extends JsonRpcWsConnection
-	implements WebSocket, OnTextMessage {
+public class JsonRpcWsClient extends JsonRpcWsConnection implements WebSocket, OnTextMessage {
 
 	/** URI for the service used */
 	private URI mServiceUri;
-	
-	/** Factory for websocket clients (currently used only once) */
-	private WebSocketClientFactory mClientFactory;
+    private String mServiceProtocol;
+
 	/** Websocket client */
 	private WebSocketClient mClient;
-	
-	public JsonRpcWsClient(
-			WebSocketClientFactory factory,
-			URI serviceUri) {
-		super();
-		
-		mClientFactory = factory;
-		mServiceUri = serviceUri;
-		
-		mClient = mClientFactory.newWebSocketClient();
+
+	public JsonRpcWsClient(URI serviceUri, String protocol, WebSocketClient client) {
+		super(new ObjectMapper());
+        mServiceUri = serviceUri;
+        mServiceProtocol = protocol;
+        mClient = client;
 	}
+
+    public JsonRpcWsClient(URI serviceUri, String protocol, WebSocketClientFactory clientFactory) {
+        super(new ObjectMapper());
+        mServiceUri = serviceUri;
+        mServiceProtocol = protocol;
+        WebSocketClient client = clientFactory.newWebSocketClient();
+        client.setProtocol(protocol);
+        mClient = client;
+    }
+
+    public JsonRpcWsClient(URI serviceUri, String protocol) {
+        super(new ObjectMapper());
+        mServiceUri = serviceUri;
+        mServiceProtocol = protocol;
+        WebSocketClientFactory clientFactory = new WebSocketClientFactory();
+        try {
+            clientFactory.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        WebSocketClient client = clientFactory.newWebSocketClient();
+        client.setProtocol(mServiceProtocol);
+        mClient = client;
+    }
 
     public WebSocketClient getWebSocketClient() {
         return mClient;
