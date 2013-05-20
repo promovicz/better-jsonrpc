@@ -11,7 +11,11 @@ import java.util.concurrent.Executors;
 public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
 
     public static List<JsonRpcExecutorConnection> createExecutorConnectionPair() {
-        return createExecutorConnectionPair(new ObjectMapper(), Executors.newCachedThreadPool());
+        return createExecutorConnectionPair(new ObjectMapper());
+    }
+
+    public static List<JsonRpcExecutorConnection> createExecutorConnectionPair(ObjectMapper mapper) {
+        return createExecutorConnectionPair(mapper, Executors.newCachedThreadPool());
     }
 
     /**

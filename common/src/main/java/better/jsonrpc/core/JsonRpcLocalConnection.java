@@ -13,6 +13,10 @@ import java.util.List;
  */
 public class JsonRpcLocalConnection extends JsonRpcConnection {
 
+    public static List<JsonRpcLocalConnection> createConnectedPair() {
+        return createConnectedPair(new ObjectMapper());
+    }
+
     /**
      * Create a local connected pair of connections
      *
@@ -20,8 +24,7 @@ public class JsonRpcLocalConnection extends JsonRpcConnection {
      *
      * @return list containing exactly 2 connections
      */
-    public static List<JsonRpcLocalConnection> createConnectedPair() {
-        ObjectMapper mapper = new ObjectMapper();
+    public static List<JsonRpcLocalConnection> createConnectedPair(ObjectMapper mapper) {
         List<JsonRpcLocalConnection> res = new ArrayList<JsonRpcLocalConnection>(2);
         JsonRpcLocalConnection a = new JsonRpcLocalConnection(mapper);
         JsonRpcLocalConnection b = new JsonRpcLocalConnection(mapper);

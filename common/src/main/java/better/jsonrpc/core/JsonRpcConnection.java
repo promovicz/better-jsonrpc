@@ -34,8 +34,15 @@ public abstract class JsonRpcConnection {
 
 
     /** Automatically assign connections an ID for debugging and other purposes */
-	protected final int mConnectionId = sConnectionIdCounter.incrementAndGet(); 
+	protected final int mConnectionId = sConnectionIdCounter.incrementAndGet();
 
+
+    /**
+     * Object mapper to be used for this connection
+     *
+     * Both client and server should always use this mapper for this connection.
+     */
+    ObjectMapper mMapper;
 
     /**
      * Server instance attached to this client
@@ -66,9 +73,6 @@ public abstract class JsonRpcConnection {
     /** Connection listeners */
 	Vector<Listener> mListeners = new Vector<Listener>();
 
-    /** Object mapper */
-    ObjectMapper mMapper;
-
 
     /**
      * Main constructor
@@ -85,16 +89,17 @@ public abstract class JsonRpcConnection {
         return mConnectionId;
     }
 
+    /** @return the object mapper for this connection */
     public ObjectMapper getMapper() {
         return mMapper;
     }
 
-    /** Returns true if this connection has a client bound to it */
+    /** @return true if this connection has a client bound to it */
     public boolean isClient() {
         return mClient != null;
     }
 
-    /** Gets the client if there is one (throws otherwise!) */
+    /** @return  the client if there is one (throws otherwise!) */
     public JsonRpcClient getClient() {
         if(mClient == null) {
             throw new RuntimeException("Connection not configured for client mode");
@@ -123,12 +128,12 @@ public abstract class JsonRpcConnection {
     }
 
 
-    /** Returns true if this connection has a server bound to it */
+    /** @return true if this connection has a server bound to it */
     public boolean isServer() {
         return mServer != null;
     }
 
-    /** Gets the server if there is one (throws otherwise!) */
+    /** @return the server if there is one (throws otherwise!) */
     public JsonRpcServer getServer() {
         if(mServer == null) {
             throw new RuntimeException("Connection not configured for server mode");
