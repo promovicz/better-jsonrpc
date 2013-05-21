@@ -3,8 +3,6 @@ package better.jsonrpc.client;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import better.jsonrpc.core.JsonRpcConnection;
 import better.jsonrpc.exceptions.DefaultExceptionResolver;
@@ -13,6 +11,7 @@ import better.jsonrpc.exceptions.ExceptionResolver;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.log4j.Logger;
 
 /**
  * A JSON-RPC client.
@@ -23,7 +22,7 @@ public class JsonRpcClient {
     public static final long DEFAULT_REQUEST_TIMEOUT = 15 * 1000;
 
     /** Global logger for clients */
-	private static final Logger LOG = Logger.getLogger(JsonRpcClient.class.getName());
+	private static final Logger LOG = Logger.getLogger(JsonRpcClient.class);
 
     /** JSON-RPC version to pretend speaking */
 	private static final String JSON_RPC_VERSION = "2.0";
@@ -121,8 +120,8 @@ public class JsonRpcClient {
      */
     public void sendRequest(JsonRpcConnection connection, ObjectNode request) throws Exception {
         // log request
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.fine("sending request " + request.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("sending request " + request.toString());
         }
         // send it
         connection.sendRequest(request);
@@ -133,8 +132,8 @@ public class JsonRpcClient {
      */
     public void sendNotification(JsonRpcConnection connection, ObjectNode notification) throws Exception {
         // log notification
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.fine("sending notification " + notification.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("sending notification " + notification.toString());
         }
         // send it
         connection.sendNotification(notification);
@@ -191,8 +190,8 @@ public class JsonRpcClient {
         // generate request id
         String id = generateId();
         // log about call
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.fine("[" + id + "] calling " + methodName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("[" + id + "] calling " + methodName);
         }
         // construct the JSON request node
         ObjectNode requestNode = createRequest(methodName, arguments, id, connection);
@@ -210,8 +209,8 @@ public class JsonRpcClient {
             result = request.waitForResponse(returnType);
         } catch (Throwable t) {
             // log about exception
-            if (LOG.isLoggable(Level.FINE)) {
-                LOG.log(Level.FINE, "[" + id + "] call to " + methodName + " throws", t);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("[" + id + "] call to " + methodName + " throws", t);
             }
             // abort the request
             request.handleException(t);
@@ -224,8 +223,8 @@ public class JsonRpcClient {
             }
         }
         // log about return
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.fine("[" + id + "] returning from " + methodName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("[" + id + "] returning from " + methodName);
         }
         // return final result
         return result;
@@ -243,8 +242,8 @@ public class JsonRpcClient {
 	public void invokeNotification(String methodName, Object arguments, JsonRpcConnection connection)
         throws Throwable {
         // log about call
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.fine("[notification] calling " + methodName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("[notification] calling " + methodName);
         }
         // create the JSON request object
 		ObjectNode requestNode = createRequest(methodName, arguments, null, connection);
@@ -256,8 +255,8 @@ public class JsonRpcClient {
 		    sendNotification(connection, requestNode);
         } catch (Throwable t) {
             // log about exception
-            if (LOG.isLoggable(Level.FINE)) {
-                LOG.log(Level.FINE, "[notification] call to " + methodName + " throws", t);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("[notification] call to " + methodName + " throws", t);
             }
             // abort the request
             request.handleException(t);
@@ -265,8 +264,8 @@ public class JsonRpcClient {
             throw t;
         }
         // log about return
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.fine("[notification] returning from " + methodName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("[notification] returning from " + methodName);
         }
 	}
 
@@ -282,8 +281,8 @@ public class JsonRpcClient {
 		if(idNode != null && idNode.isTextual()) {
 			String id = idNode.asText();
             // log response
-            if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("received response " + response.toString());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("received response " + response.toString());
             }
             // retrieve the request from the client table
             JsonRpcClientRequest req = null;

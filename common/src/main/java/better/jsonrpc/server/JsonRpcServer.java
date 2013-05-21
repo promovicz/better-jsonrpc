@@ -10,8 +10,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import better.jsonrpc.annotations.JsonRpcParam;
 import better.jsonrpc.core.JsonRpcConnection;
@@ -30,6 +28,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.apache.log4j.Logger;
 
 /**
  * A JSON-RPC request server reads JSON-RPC requests from an
@@ -37,7 +36,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
  */
 public class JsonRpcServer {
 
-	protected static final Logger LOG = Logger.getLogger(JsonRpcServer.class.getName());
+	protected static final Logger LOG = Logger.getLogger(JsonRpcServer.class);
 
     /** Default error resolver */
 	public static final ErrorResolver DEFAULT_ERRROR_RESOLVER
@@ -92,8 +91,8 @@ public class JsonRpcServer {
 	public void handleRequest(Object handler, ObjectNode node, JsonRpcConnection connection) throws Throwable {
         ObjectMapper mapper = connection.getMapper();
 
-		if (LOG.isLoggable(Level.FINE)) {
-			LOG.log(Level.FINE, "Request: " + node.toString());
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Request: " + node.toString());
 		}
 
 		// validate request
@@ -149,8 +148,8 @@ public class JsonRpcServer {
 		
 		// log errors
 		if(thrown != null) {
-			if (LOG.isLoggable(Level.SEVERE)) {
-				LOG.log(Level.SEVERE, "Error in JSON-RPC Service", thrown);
+			if (LOG.isInfoEnabled()) {
+				LOG.info("Error in JSON-RPC Service", thrown);
 			}
 		}
 		
@@ -223,8 +222,8 @@ public class JsonRpcServer {
 		InvocationTargetException {
 
 		// debug log
-		if (LOG.isLoggable(Level.FINE)) {
-			LOG.log(Level.FINE, "Invoking method: "+m.getName());
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Invoking method: "+m.getName());
 		}
 
 		// convert the parameters

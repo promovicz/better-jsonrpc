@@ -3,8 +3,6 @@ package better.jsonrpc.core;
 import java.io.IOException;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import better.jsonrpc.client.JsonRpcClient;
 import better.jsonrpc.server.JsonRpcServer;
@@ -12,6 +10,7 @@ import better.jsonrpc.server.JsonRpcServer;
 import better.jsonrpc.util.ProxyUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.log4j.Logger;
 
 /**
  * JSON-RPC connections
@@ -27,7 +26,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public abstract class JsonRpcConnection {
 
     /** Global logger, may be used by subclasses */
-	protected static final Logger LOG = Logger.getLogger(JsonRpcConnection.class.getSimpleName());
+	protected static final Logger LOG = Logger.getLogger(JsonRpcConnection.class);
 
     /** Global counter for connection IDs */
 	private static final AtomicInteger sConnectionIdCounter = new AtomicInteger();
@@ -113,8 +112,8 @@ public abstract class JsonRpcConnection {
             throw new RuntimeException("Connection already has a client");
         }
 
-        if(LOG.isLoggable(Level.FINE)) {
-            LOG.fine("[" + mConnectionId + "] binding client");
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("[" + mConnectionId + "] binding client");
         }
 
         mClient = client;
@@ -147,8 +146,8 @@ public abstract class JsonRpcConnection {
             throw new RuntimeException("Connection already has a server");
         }
 
-        if(LOG.isLoggable(Level.FINE)) {
-            LOG.fine("[" + mConnectionId + "] binding server");
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("[" + mConnectionId + "] binding server");
         }
 
         mServer = server;

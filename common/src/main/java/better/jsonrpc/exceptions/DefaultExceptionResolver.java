@@ -2,12 +2,11 @@ package better.jsonrpc.exceptions;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import better.jsonrpc.client.JsonRpcClientException;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.log4j.Logger;
 
 /**
  * Default implementation of the {@link ExceptionResolver}
@@ -19,7 +18,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class DefaultExceptionResolver
 	implements ExceptionResolver {
 
-	private static final Logger LOGGER = Logger.getLogger(DefaultExceptionResolver.class.getName());
+	private static final Logger LOG = Logger.getLogger(DefaultExceptionResolver.class);
 
 	public static final DefaultExceptionResolver INSTANCE = new DefaultExceptionResolver();
 
@@ -59,7 +58,7 @@ public class DefaultExceptionResolver
 		try {
 			ret = createThrowable(exceptionTypeName, message);
 		} catch(Exception e) {
-			LOGGER.log(Level.WARNING, "Unable to create throwable", e);
+			LOG.warn("Unable to create throwable", e);
 		}
 
 		// if we can't create it, create a default exception
@@ -111,13 +110,13 @@ public class DefaultExceptionResolver
 		try {
 			clazz = Class.forName(typeName);
 		} catch(Exception e) {
-			LOGGER.warning("Unable to load Throwable class "+typeName);
+			LOG.warn("Unable to load Throwable class " + typeName);
 			return null;
 		}
 
 		// get Throwable clazz
 		if (!Throwable.class.isAssignableFrom(clazz)) {
-			LOGGER.warning("Type does not inherit from Throwable"+clazz.getName());
+			LOG.warn("Type does not inherit from Throwable" + clazz.getName());
 			return null;
 		}
 		@SuppressWarnings("unchecked")
@@ -139,19 +138,19 @@ public class DefaultExceptionResolver
 		if (message!=null && messageCtr!=null) {
 			return messageCtr.newInstance(message);
 		} else if (message!=null && defaultCtr!=null) {
-			LOGGER.warning("Unable to invoke message constructor for "+clazz.getName());
+			LOG.warn("Unable to invoke message constructor for " + clazz.getName());
 			return defaultCtr.newInstance();
 
 		// defaultCtr
 		} else if (message==null && defaultCtr!=null) {
 			return defaultCtr.newInstance();
 		} else if (message==null && messageCtr!=null) {
-			LOGGER.warning("Passing null message to message constructor for "+clazz.getName());
+			LOG.warn("Passing null message to message constructor for " + clazz.getName());
 			return messageCtr.newInstance((String)null);
 
 		// can't find a constructor
 		} else {
-			LOGGER.warning("Unable to find a suitable constructor for "+clazz.getName());
+			LOG.warn("Unable to find a suitable constructor for " + clazz.getName());
 			return null;
 		}
 

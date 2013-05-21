@@ -1,32 +1,25 @@
 package better.jsonrpc.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.sound.midi.VoiceStatus;
 
 import better.jsonrpc.annotations.JsonRpcNotification;
 import better.jsonrpc.client.JsonRpcClient;
 import better.jsonrpc.core.JsonRpcConnection;
+import org.apache.log4j.Logger;
 
 /**
  * Utilities for create client proxies.
  */
 public abstract class ProxyUtil {
 
-	private static final Logger LOGGER = Logger.getLogger(ProxyUtil.class.getName());
+	private static final Logger LOG = Logger.getLogger(ProxyUtil.class);
 
 	/**
 	 * Creates a composite service using all of the given
@@ -82,8 +75,8 @@ public abstract class ProxyUtil {
 			// find a service for this interface
 			for (Object o : services) {
 				if (clazz.isInstance(o)) {
-					if (LOGGER.isLoggable(Level.FINE)) {
-						LOGGER.fine("Using "+o.getClass().getName()+" for "+clazz.getName());
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Using " + o.getClass().getName() + " for " + clazz.getName());
 					}
 					serviceMap.put(clazz, o);
 					break;
@@ -109,13 +102,12 @@ public abstract class ProxyUtil {
 	}
 
 	/**
-	 * Creates a {@link Proxy} of the given {@link proxyInterface}
+	 * Creates a {@link Proxy} of the given proxyInterface
 	 * that uses the given {@link JsonRpcClient}.
 	 * @param <T> the proxy type
 	 * @param classLoader the {@link ClassLoader}
 	 * @param proxyInterface the interface to proxy
-	 * @param client the {@link JsonRpcClient}
-	 * @param socket the {@link Socket}
+	 * @param connection the {@link JsonRpcConnection}
 	 * @return the proxied interface
 	 */
 	public static <T> T createClientProxy(
@@ -129,14 +121,12 @@ public abstract class ProxyUtil {
 	}
 
 	/**
-	 * Creates a {@link Proxy} of the given {@link proxyInterface}
+	 * Creates a {@link Proxy} of the given proxyInterface
 	 * that uses the given {@link JsonRpcClient}.
 	 * @param <T> the proxy type
 	 * @param classLoader the {@link ClassLoader}
 	 * @param proxyInterface the interface to proxy
-	 * @param client the {@link JsonRpcClient}
-	 * @param ips the {@link InputStream}
-	 * @param ops the {@link OutputStream}
+	 * @param connection the {@link JsonRpcConnection}
 	 * @return the proxied interface
 	 */
 	@SuppressWarnings("unchecked")
