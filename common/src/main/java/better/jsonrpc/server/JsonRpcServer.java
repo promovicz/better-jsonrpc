@@ -1,7 +1,6 @@
 package better.jsonrpc.server;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -31,12 +30,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-/*
-import javax.portlet.ResourceRequest;
-import javax.portlet.ResourceResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-*/
 
 /**
  * A JSON-RPC request server reads JSON-RPC requests from an
@@ -46,22 +39,37 @@ public class JsonRpcServer {
 
 	protected static final Logger LOG = Logger.getLogger(JsonRpcServer.class.getName());
 
-	public static final String JSONRPC_RESPONSE_CONTENT_TYPE = "application/json-rpc";
-
+    /** Default error resolver */
 	public static final ErrorResolver DEFAULT_ERRROR_RESOLVER
 		= new MultipleErrorResolver(AnnotationsErrorResolver.INSTANCE, DefaultErrorResolver.INSTANCE);
 
-	private boolean backwardsComaptible		= true;
-	private boolean rethrowExceptions 		= false;
-	private boolean allowExtraParams 		= false;
-	private boolean allowLessParams			= false;
-	private ErrorResolver errorResolver	= null;
-	private Class<?>[] remoteInterfaces;
+    /** Protocol interfaces for this server*/
+    private Class<?>[] mRemoteInterfaces;
 
+    /** Enable/disable exception rethrow */
+	private boolean mRethrowExceptions = false;
+    /** Error resolver to be used */
+    private ErrorResolver mErrorResolver = null;
+
+    /** Accept pre-JSON-RPC-2.0 requests */
+    private boolean mBackwardsCompatible = true;
+    /** Accept and ignore unknown parameters */
+	private boolean mAllowExtraParams = false;
+    /** Allow calling methods with unsatisfied parameters */
+	private boolean mAllowLessParams = false;
+
+    /**
+     * Construct a JSON-RPC server with multiple protocols
+     * @param remoteInterfaces representing the protocols
+     */
 	public JsonRpcServer(Class<?>[] remoteInterfaces) {
-		this.remoteInterfaces	= remoteInterfaces;
+		this.mRemoteInterfaces = remoteInterfaces;
 	}
-	
+
+    /**
+     * Construct a JSON-RPC server for the given protocol
+     * @param remoteInterface representing the protocol
+     */
 	public JsonRpcServer(Class<?> remoteInterface) {
 		this(new Class<?>[] { remoteInterface });
 	}
@@ -72,7 +80,7 @@ public class JsonRpcServer {
 	 * @return the class
 	 */
 	private Class<?>[] getHandlerInterfaces() {
-		return remoteInterfaces;
+		return mRemoteInterfaces;
 	}
 	
 	/**
@@ -89,7 +97,7 @@ public class JsonRpcServer {
 		}
 
 		// validate request
-		if (!backwardsComaptible && !node.has("jsonrpc") || !node.has("method")) {
+		if (!mBackwardsCompatible && !node.has("jsonrpc") || !node.has("method")) {
 			connection.sendResponse(
 				ProtocolUtils.createErrorResponse(mapper,
 					"2.0", "null", -32600, "Invalid Request", null));
@@ -164,7 +172,7 @@ public class JsonRpcServer {
 		}
 		
 		// rethrow if applicable
-		if(thrown != null && rethrowExceptions) {
+		if(thrown != null && mRethrowExceptions) {
 			throw new RuntimeException(thrown);
 		}
 	}
@@ -180,8 +188,8 @@ public class JsonRpcServer {
 		}
 
 		// resolve error
-		if (errorResolver!=null) {
-			error = errorResolver.resolveError(
+		if (mErrorResolver !=null) {
+			error = mErrorResolver.resolveError(
 				e, methodArgs.method, methodArgs.arguments);
 		} else {
 			error = DEFAULT_ERRROR_RESOLVER.resolveError(
@@ -302,8 +310,8 @@ public class JsonRpcServer {
 
 			// we don't allow extra params
 			} else if (
-				!allowExtraParams && paramNumDiff<0
-				|| !allowLessParams && paramNumDiff>0) {
+				!mAllowExtraParams && paramNumDiff<0
+				|| !mAllowLessParams && paramNumDiff>0) {
 				continue;
 
 			// check the parameters
@@ -391,9 +399,9 @@ public class JsonRpcServer {
 			List<Class<?>> parameterTypes = ReflectionUtil.getParameterTypes(method);
 
 			// bail early if possible
-			if (!allowExtraParams && paramNames.size()>parameterTypes.size()) {
+			if (!mAllowExtraParams && paramNames.size()>parameterTypes.size()) {
 				continue;
-			} else if (!allowLessParams && paramNames.size()<parameterTypes.size()) {
+			} else if (!mAllowLessParams && paramNames.size()<parameterTypes.size()) {
 				continue;
 			}
 
@@ -440,9 +448,9 @@ public class JsonRpcServer {
 
 			// check for exact param matches
 			// bail early if possible
-			if (!allowExtraParams && numMatchingParams>parameterTypes.size()) {
+			if (!mAllowExtraParams && numMatchingParams>parameterTypes.size()) {
 				continue;
-			} else if (!allowLessParams && numMatchingParams<parameterTypes.size()) {
+			} else if (!mAllowLessParams && numMatchingParams<parameterTypes.size()) {
 				continue;
 			}
 
@@ -549,10 +557,10 @@ public class JsonRpcServer {
 	 * omission of the jsonrpc property on the request object,
 	 * not the class hinting.
 	 *
-	 * @param backwardsComaptible the backwardsComaptible to set
+	 * @param backwardsCompatible the backwardsCompatible to set
 	 */
-	public void setBackwardsComaptible(boolean backwardsComaptible) {
-		this.backwardsComaptible = backwardsComaptible;
+	public void setBackwardsCompatible(boolean backwardsCompatible) {
+		this.mBackwardsCompatible = backwardsCompatible;
 	}
 
 	/**
@@ -561,7 +569,7 @@ public class JsonRpcServer {
 	 * @param rethrowExceptions true or false
 	 */
 	public void setRethrowExceptions(boolean rethrowExceptions) {
-		this.rethrowExceptions = rethrowExceptions;
+		this.mRethrowExceptions = rethrowExceptions;
 	}
 
 	/**
@@ -571,7 +579,7 @@ public class JsonRpcServer {
 	 * @param allowExtraParams true or false
 	 */
 	public void setAllowExtraParams(boolean allowExtraParams) {
-		this.allowExtraParams = allowExtraParams;
+		this.mAllowExtraParams = allowExtraParams;
 	}
 
 	/**
@@ -581,7 +589,7 @@ public class JsonRpcServer {
 	 * @param allowLessParams the allowLessParams to set
 	 */
 	public void setAllowLessParams(boolean allowLessParams) {
-		this.allowLessParams = allowLessParams;
+		this.mAllowLessParams = allowLessParams;
 	}
 
 	/**
@@ -593,7 +601,7 @@ public class JsonRpcServer {
 	 * @see MultipleErrorResolver
 	 */
 	public void setErrorResolver(ErrorResolver errorResolver) {
-		this.errorResolver = errorResolver;
+		this.mErrorResolver = errorResolver;
 	}
 
 }
