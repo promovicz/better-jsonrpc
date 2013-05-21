@@ -10,10 +10,25 @@ import java.util.concurrent.Executors;
 
 public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
 
+    /**
+     * Create a local connected pair of connections
+     *
+     * The connections can be used immediately.
+     *
+     * @return list containing exactly 2 connections
+     */
     public static List<JsonRpcExecutorConnection> createExecutorConnectionPair() {
         return createExecutorConnectionPair(new ObjectMapper());
     }
 
+    /**
+     * Create a local connected pair of connections
+     *
+     * The connections can be used immediately.
+     *
+     * @param mapper to be used for this connection
+     * @return list containing exactly 2 connections
+     */
     public static List<JsonRpcExecutorConnection> createExecutorConnectionPair(ObjectMapper mapper) {
         return createExecutorConnectionPair(mapper, Executors.newCachedThreadPool());
     }
@@ -23,6 +38,8 @@ public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
      *
      * The connections can be used immediately.
      *
+     * @param mapper to be used for this connection
+     * @param executor to be used for decoupling the connnections
      * @return list containing exactly 2 connections
      */
     public static List<JsonRpcExecutorConnection> createExecutorConnectionPair(ObjectMapper mapper, Executor executor) {
@@ -36,13 +53,26 @@ public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
         return res;
     }
 
+    /** Executor used to decouple the connection */
     Executor mExecutor;
 
+    /**
+     * Main constructor
+     *
+     * @param mapper
+     * @param executor
+     */
     public JsonRpcExecutorConnection(ObjectMapper mapper, Executor executor) {
         super(mapper);
         mExecutor = executor;
     }
 
+    /** @return the executor used to decouple this connection */
+    public Executor getExecutor() {
+        return mExecutor;
+    }
+
+    /** {@inheritDoc} */
     @Override
     public void sendRequest(final ObjectNode request) throws Exception {
         mExecutor.execute(new Runnable() {
@@ -56,6 +86,7 @@ public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
         });
     }
 
+    /** {@inheritDoc} */
     @Override
     public void sendResponse(final ObjectNode response) throws Exception {
         mExecutor.execute(new Runnable() {
@@ -69,6 +100,7 @@ public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
         });
     }
 
+    /** {@inheritDoc} */
     @Override
     public void sendNotification(final ObjectNode notification) throws Exception {
         mExecutor.execute(new Runnable() {

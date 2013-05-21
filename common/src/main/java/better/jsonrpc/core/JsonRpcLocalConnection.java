@@ -13,6 +13,13 @@ import java.util.List;
  */
 public class JsonRpcLocalConnection extends JsonRpcConnection {
 
+    /**
+     * Create a local connected pair of connections
+     *
+     * The connections can be used immediately.
+     *
+     * @return list containing exactly 2 connections
+     */
     public static List<JsonRpcLocalConnection> createConnectedPair() {
         return createConnectedPair(new ObjectMapper());
     }
@@ -22,6 +29,7 @@ public class JsonRpcLocalConnection extends JsonRpcConnection {
      *
      * The connections can be used immediately.
      *
+     * @param mapper to be used for the connections
      * @return list containing exactly 2 connections
      */
     public static List<JsonRpcLocalConnection> createConnectedPair(ObjectMapper mapper) {
@@ -38,6 +46,11 @@ public class JsonRpcLocalConnection extends JsonRpcConnection {
     /** The partner connection of this connection */
     JsonRpcLocalConnection mOtherConnection;
 
+    /**
+     * Main constructor
+     *
+     * @param mapper to be used for this connection
+     */
     public JsonRpcLocalConnection(ObjectMapper mapper) {
         super(mapper);
     }
