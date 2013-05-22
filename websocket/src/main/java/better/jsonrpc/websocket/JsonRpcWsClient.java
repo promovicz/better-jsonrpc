@@ -58,7 +58,7 @@ public class JsonRpcWsClient extends JsonRpcWsConnection implements WebSocket, O
     }
 
 	public void connect() throws IOException {
-        if(LOG.isLoggable(Level.INFO)) {
+        if(LOG.isInfoEnabled()) {
             LOG.info("[" + mConnectionId + "] connecting");
         }
 		mClient.open(mServiceUri, this);
@@ -67,7 +67,7 @@ public class JsonRpcWsClient extends JsonRpcWsConnection implements WebSocket, O
     public void connect(long maxWait, TimeUnit maxWaitUnit)
             throws TimeoutException, IOException, InterruptedException
     {
-        if(LOG.isLoggable(Level.INFO)) {
+        if(LOG.isInfoEnabled()) {
             LOG.info("[" + mConnectionId + "] connecting with timeout of " + maxWait + " " + maxWaitUnit);
         }
         mClient.open(mServiceUri, this, maxWait, maxWaitUnit);
