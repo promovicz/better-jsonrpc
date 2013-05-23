@@ -176,7 +176,7 @@ public class JsonRpcServer {
 			}
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Response: " + node.toString());
+                LOG.debug("Response: " + response.toString());
             }
 			
 			connection.sendResponse(response);
