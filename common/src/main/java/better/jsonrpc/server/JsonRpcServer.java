@@ -152,8 +152,12 @@ public class JsonRpcServer {
 		
 		// log errors
 		if(thrown != null) {
+            Throwable realThrown = thrown;
+            if(realThrown instanceof InvocationTargetException) {
+                realThrown = ((InvocationTargetException)realThrown).getTargetException();
+            }
 			if (LOG.isInfoEnabled()) {
-				LOG.info("Error in JSON-RPC Service", thrown);
+				LOG.info("Error in JSON-RPC call", realThrown);
 			}
 		}
 		
@@ -230,8 +234,8 @@ public class JsonRpcServer {
 		InvocationTargetException {
 
 		// debug log
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Invoking method: "+m.getName());
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("Invoking method: "+m.getName());
 		}
 
 		// convert the parameters
