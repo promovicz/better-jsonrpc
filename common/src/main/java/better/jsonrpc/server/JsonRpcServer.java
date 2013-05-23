@@ -31,8 +31,12 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.log4j.Logger;
 
 /**
- * A JSON-RPC request server reads JSON-RPC requests from an
- * input stream and writes responses to an output stream.
+ * A JSON-RPC server
+ *
+ * Log levels:
+ *
+ *   DEBUG will show requests and responses
+ *
  */
 public class JsonRpcServer {
 
@@ -166,6 +170,10 @@ public class JsonRpcServer {
 						mapper, version, id,
 						error.getCode(), error.getMessage(), error.getData());
 			}
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Response: " + node.toString());
+            }
 			
 			connection.sendResponse(response);
 		}
@@ -179,7 +187,7 @@ public class JsonRpcServer {
 	private ErrorResolver.JsonError resolveError(Throwable thrown, MethodAndArgs methodArgs) {
 		// attempt to resolve the error
 		ErrorResolver.JsonError error = null;
-		
+
 		// get cause of exception
 		Throwable e = thrown;
 		if (InvocationTargetException.class.isInstance(e)) {

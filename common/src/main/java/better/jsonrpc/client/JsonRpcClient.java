@@ -14,7 +14,16 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.log4j.Logger;
 
 /**
- * A JSON-RPC client.
+ * A JSON-RPC client
+ *
+ * This class implements a JSON-RPC client that can be attached
+ * to a connection and used to perform JSON-RPC calls through it.
+ *
+ * Log levels:
+ *
+ *   DEBUG will show requests and responses
+ *   TRACE will show progress of calls
+ *
  */
 public class JsonRpcClient {
 
@@ -121,7 +130,7 @@ public class JsonRpcClient {
     public void sendRequest(JsonRpcConnection connection, ObjectNode request) throws Exception {
         // log request
         if (LOG.isDebugEnabled()) {
-            LOG.debug("sending request " + request.toString());
+            LOG.debug("Request: " + request.toString());
         }
         // send it
         connection.sendRequest(request);
@@ -133,7 +142,7 @@ public class JsonRpcClient {
     public void sendNotification(JsonRpcConnection connection, ObjectNode notification) throws Exception {
         // log notification
         if (LOG.isDebugEnabled()) {
-            LOG.debug("sending notification " + notification.toString());
+            LOG.debug("Notification: " + notification.toString());
         }
         // send it
         connection.sendNotification(notification);
@@ -190,8 +199,8 @@ public class JsonRpcClient {
         // generate request id
         String id = generateId();
         // log about call
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("[" + id + "] calling " + methodName);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[" + id + "] calling " + methodName);
         }
         // construct the JSON request node
         ObjectNode requestNode = createRequest(methodName, arguments, id, connection);
@@ -209,8 +218,8 @@ public class JsonRpcClient {
             result = request.waitForResponse(returnType);
         } catch (Throwable t) {
             // log about exception
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[" + id + "] call to " + methodName + " throws", t);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("[" + id + "] call to " + methodName + " throws", t);
             }
             // abort the request
             request.handleException(t);
@@ -223,8 +232,8 @@ public class JsonRpcClient {
             }
         }
         // log about return
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("[" + id + "] returning from " + methodName);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[" + id + "] returning from " + methodName);
         }
         // return final result
         return result;
@@ -242,8 +251,8 @@ public class JsonRpcClient {
 	public void invokeNotification(String methodName, Object arguments, JsonRpcConnection connection)
         throws Throwable {
         // log about call
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("[notification] calling " + methodName);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[notification] calling " + methodName);
         }
         // create the JSON request object
 		ObjectNode requestNode = createRequest(methodName, arguments, null, connection);
@@ -255,8 +264,8 @@ public class JsonRpcClient {
 		    sendNotification(connection, requestNode);
         } catch (Throwable t) {
             // log about exception
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[notification] call to " + methodName + " throws", t);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("[notification] call to " + methodName + " throws", t);
             }
             // abort the request
             request.handleException(t);
@@ -264,8 +273,8 @@ public class JsonRpcClient {
             throw t;
         }
         // log about return
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("[notification] returning from " + methodName);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[notification] returning from " + methodName);
         }
 	}
 
@@ -282,7 +291,7 @@ public class JsonRpcClient {
 			String id = idNode.asText();
             // log response
             if (LOG.isDebugEnabled()) {
-                LOG.debug("received response " + response.toString());
+                LOG.debug("Response: " + response.toString());
             }
             // retrieve the request from the client table
             JsonRpcClientRequest req = null;
