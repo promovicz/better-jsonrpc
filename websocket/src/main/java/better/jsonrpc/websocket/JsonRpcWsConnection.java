@@ -34,8 +34,8 @@ public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket,
 	}
 	
 	public void transmit(String data) throws IOException {
-        if(LOG.isDebugEnabled()) {
-		    LOG.debug("[" + mConnectionId + "] transmitting \"" + data + "\"");
+        if(LOG.isTraceEnabled()) {
+		    LOG.trace("[" + mConnectionId + "] transmitting \"" + data + "\"");
         }
 		if(mConnection != null && mConnection.isOpen()) {
 			mConnection.sendMessage(data);
@@ -44,8 +44,8 @@ public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket,
 
 	@Override
 	public void onOpen(Connection connection) {
-        if(LOG.isInfoEnabled()) {
-		    LOG.info("[" + mConnectionId + "] connection open");
+        if(LOG.isDebugEnabled()) {
+		    LOG.debug("[" + mConnectionId + "] connection open");
         }
 		super.onOpen();
 		mConnection = connection;
@@ -53,8 +53,8 @@ public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket,
 
 	@Override
 	public void onClose(int closeCode, String message) {
-        if(LOG.isInfoEnabled()) {
-		    LOG.info("[" + mConnectionId + "] connection close " + closeCode + "/" + message);
+        if(LOG.isDebugEnabled()) {
+		    LOG.debug("[" + mConnectionId + "] connection close " + closeCode + "/" + message);
         }
 		super.onClose();
 		mConnection = null;
@@ -62,8 +62,8 @@ public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket,
 	
 	@Override
 	public void onMessage(String data) {
-        if(LOG.isDebugEnabled()) {
-		    LOG.debug("[" + mConnectionId + "] received \"" + data + "\"");
+        if(LOG.isTraceEnabled()) {
+		    LOG.trace("[" + mConnectionId + "] received \"" + data + "\"");
         }
 		try {
 			JsonNode message = getMapper().readTree(data);
