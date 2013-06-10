@@ -17,12 +17,48 @@ public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket,
 	
 	/** Currently active websocket connection */
 	private Connection mConnection;
+
+    /** Max idle time for the connection */
+    private int mMaxIdleTime = 300 * 1000;
+
+    /** Max test message size */
+    private int mMaxTextMessageSize = 1 << 16;
+
+    /** Max binary message size */
+    private int mMaxBinaryMessageSize = 1 << 16;
 	
 	public JsonRpcWsConnection(ObjectMapper mapper) {
 		super(mapper);
 	}
-	
-	@Override
+
+    public int getMaxIdleTime() {
+        return mMaxIdleTime;
+    }
+
+    public void setMaxIdleTime(int maxIdleTime) {
+        this.mMaxIdleTime = maxIdleTime;
+        applyConnectionParameters();
+    }
+
+    public int getMaxTextMessageSize() {
+        return mMaxTextMessageSize;
+    }
+
+    public void setMaxTextMessageSize(int maxTextMessageSize) {
+        this.mMaxTextMessageSize = maxTextMessageSize;
+        applyConnectionParameters();
+    }
+
+    public int getMaxBinaryMessageSize() {
+        return mMaxBinaryMessageSize;
+    }
+
+    public void setMaxBinaryMessageSize(int maxBinaryMessageSize) {
+        this.mMaxBinaryMessageSize = maxBinaryMessageSize;
+        applyConnectionParameters();
+    }
+
+    @Override
 	public boolean isConnected() {
 		return mConnection != null && mConnection.isOpen();
 	}
@@ -49,6 +85,7 @@ public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket,
         }
 		super.onOpen();
 		mConnection = connection;
+        applyConnectionParameters();
 	}
 
 	@Override
@@ -93,6 +130,14 @@ public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket,
 			t.printStackTrace();
 		}
 	}
+
+    private void applyConnectionParameters() {
+        if(mConnection != null) {
+            mConnection.setMaxIdleTime(mMaxIdleTime);
+            mConnection.setMaxTextMessageSize(mMaxTextMessageSize);
+            mConnection.setMaxBinaryMessageSize(mMaxBinaryMessageSize);
+        }
+    }
 	
 	@Override
 	public void sendRequest(ObjectNode request) throws IOException {
