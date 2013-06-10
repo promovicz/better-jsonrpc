@@ -82,6 +82,7 @@ public class JsonRpcClientRequest {
         try {
             if (!isDone()) {
                 mDisconnected = true;
+                mCondition.signalAll();
             }
         } finally {
             mLock.unlock();
@@ -133,7 +134,9 @@ public class JsonRpcClientRequest {
                 long timeLeft = timeout - System.currentTimeMillis();
                 // throw on timeout
                 if (timeLeft <= 0) {
-                    throw new JsonRpcClientTimeout();
+                    mException = new JsonRpcClientTimeout();
+                    mCondition.signalAll();
+                    throw mException;
                 }
                 // wait for state changes
                 try {
@@ -144,7 +147,7 @@ public class JsonRpcClientRequest {
 
             // throw if we got disconnected
             if (mDisconnected) {
-                throw new RuntimeException("JSON-RPC disconnect");
+                throw new JsonRpcClientDisconnect();
             }
 
             // detect rpc failures
