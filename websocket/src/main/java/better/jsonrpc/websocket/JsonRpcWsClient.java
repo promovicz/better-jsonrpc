@@ -22,35 +22,32 @@ public class JsonRpcWsClient extends JsonRpcWsConnection implements WebSocket, O
 	/** Websocket client */
 	private WebSocketClient mClient;
 
-	public JsonRpcWsClient(URI serviceUri, String protocol, WebSocketClient client) {
-		super(new ObjectMapper());
+    public JsonRpcWsClient(URI serviceUri, String protocol, WebSocketClient client, ObjectMapper mapper) {
+        super(mapper);
         mServiceUri = serviceUri;
         mServiceProtocol = protocol;
-        mClient = client;
-	}
-
-    public JsonRpcWsClient(URI serviceUri, String protocol, WebSocketClientFactory clientFactory) {
-        super(new ObjectMapper());
-        mServiceUri = serviceUri;
-        mServiceProtocol = protocol;
-        WebSocketClient client = clientFactory.newWebSocketClient();
-        client.setProtocol(protocol);
         mClient = client;
     }
 
+	public JsonRpcWsClient(URI serviceUri, String protocol, WebSocketClient client) {
+		this(serviceUri, protocol, client, new ObjectMapper());
+	}
+
+    public JsonRpcWsClient(URI serviceUri, String protocol, WebSocketClientFactory clientFactory) {
+        this(serviceUri, protocol, clientFactory.newWebSocketClient(), new ObjectMapper());
+        mClient.setProtocol(protocol);
+    }
+
     public JsonRpcWsClient(URI serviceUri, String protocol) {
-        super(new ObjectMapper());
-        mServiceUri = serviceUri;
-        mServiceProtocol = protocol;
+        this(serviceUri, protocol, null, new ObjectMapper());
         WebSocketClientFactory clientFactory = new WebSocketClientFactory();
         try {
             clientFactory.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        WebSocketClient client = clientFactory.newWebSocketClient();
-        client.setProtocol(mServiceProtocol);
-        mClient = client;
+        mClient = clientFactory.newWebSocketClient();
+        mClient.setProtocol(mServiceProtocol);
     }
 
     public WebSocketClient getWebSocketClient() {
