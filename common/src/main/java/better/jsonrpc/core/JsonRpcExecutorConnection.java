@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+/**
+ * A variant of local connections using executors
+ */
 public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
 
     /**
@@ -31,6 +34,18 @@ public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
      */
     public static List<JsonRpcExecutorConnection> createExecutorConnectionPair(ObjectMapper mapper) {
         return createExecutorConnectionPair(mapper, Executors.newCachedThreadPool());
+    }
+
+    /**
+     * Create a local connected pair of executor connections
+     *
+     * The connections can be used immediately.
+     *
+     * @param executor to be used for decoupling the connnections
+     * @return list containing exactly 2 connections
+     */
+    public static List<JsonRpcExecutorConnection> createExecutorConnectionPair(Executor executor) {
+        return createExecutorConnectionPair(new ObjectMapper(), executor);
     }
 
     /**
