@@ -25,7 +25,6 @@
     <jackson.version>2.1.4</jackson.version>
     <jetty.version>8.1.10.v20130312</jetty.version>
     <junit.version>4.11</junit.version>
-    <jcommander.version>1.30</jcommander.version>
   </properties>
   
 </project>
