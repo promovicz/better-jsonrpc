@@ -8,6 +8,11 @@
 
   <packaging>pom</packaging>
 
+  <description>
+    Better JSON-RPC is an implementation of the JSON-RPC protocol using annotated Java interfaces.
+    It currently supports JSON-RPC 2.0 as well as backwards-compatibility with JSON-RPC 1.0.
+  </description>
+
   <modules>
     <module>annotations</module>
     <module>common</module>

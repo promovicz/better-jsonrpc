@@ -11,6 +11,10 @@
   <artifactId>better-jsonrpc-annotations</artifactId>
 
   <name>Better JSON-RPC Annotations</name>
+  
+  <description>
+    This library contains just the annotation classes used for declaring JSON-RPC interfaces.
+  </description>
 
   <packaging>jar</packaging>
 

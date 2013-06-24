@@ -10,7 +10,12 @@
 
   <artifactId>better-jsonrpc-websocket</artifactId>
 
-  <name>Better JSON-RPC WebSocket Module</name>
+  <name>Better JSON-RPC WebSocket Transport</name>
+
+  <description>
+    This package integrates Better JSON-RPC with the Jetty WebSocket implementation.
+    It can be used to implement actual JSON-RPC clients and servers.
+  </description>
 
   <packaging>jar</packaging>
 

@@ -12,6 +12,12 @@
 
   <name>Better JSON-RPC Common</name>
 
+  <description>
+    This package contains the core of the Better JSON-RPC implementation.
+    It supports both servers and clients as well as a local-only transport.
+    For actual use you will also need a transport implementation.
+  </description>
+
   <packaging>jar</packaging>
 
   <properties>
