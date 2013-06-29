@@ -1,6 +1,8 @@
 package better.jsonrpc.websocket;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +15,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import better.jsonrpc.core.JsonRpcConnection;
 
-public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket, OnTextMessage {
+public class JsonRpcWsConnection extends JsonRpcConnection
+        implements WebSocket, WebSocket.OnTextMessage, WebSocket.OnBinaryMessage {
 	
 	/** Currently active websocket connection */
 	private Connection mConnection;
@@ -26,6 +29,15 @@ public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket,
 
     /** Max binary message size */
     private int mMaxBinaryMessageSize = 1 << 16;
+
+    /** Whether to accept binary messages */
+    private boolean mAcceptBinaryMessages = true;
+
+    /** Whether to accept text messages */
+    private boolean mAcceptTextMessages = true;
+
+    /** Whether to send binary messages (text is the default) */
+    private boolean mSendBinaryMessages = false;
 	
 	public JsonRpcWsConnection(ObjectMapper mapper) {
 		super(mapper);
@@ -58,6 +70,30 @@ public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket,
         applyConnectionParameters();
     }
 
+    public boolean isAcceptBinaryMessages() {
+        return mAcceptBinaryMessages;
+    }
+
+    public void setAcceptBinaryMessages(boolean acceptBinaryMessages) {
+        this.mAcceptBinaryMessages = acceptBinaryMessages;
+    }
+
+    public boolean isAcceptTextMessages() {
+        return mAcceptTextMessages;
+    }
+
+    public void setAcceptTextMessages(boolean acceptTextMessages) {
+        this.mAcceptTextMessages = acceptTextMessages;
+    }
+
+    public boolean isSendBinaryMessages() {
+        return mSendBinaryMessages;
+    }
+
+    public void setSendBinaryMessages(boolean sendBinaryMessages) {
+        this.mSendBinaryMessages = sendBinaryMessages;
+    }
+
     @Override
 	public boolean isConnected() {
 		return mConnection != null && mConnection.isOpen();
@@ -70,13 +106,29 @@ public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket,
 	}
 	
 	public void transmit(String data) throws IOException {
-        if(LOG.isTraceEnabled()) {
-		    LOG.trace("[" + mConnectionId + "] transmitting \"" + data + "\"");
-        }
 		if(mConnection != null && mConnection.isOpen()) {
 			mConnection.sendMessage(data);
 		}
 	}
+
+    public void transmit(byte[] data, int offset, int length) throws IOException {
+        if(mConnection != null && mConnection.isOpen()) {
+            mConnection.sendMessage(data, offset, length);
+        }
+    }
+
+    public void transmit(JsonNode node) throws IOException {
+        if(LOG.isTraceEnabled()) {
+            LOG.trace("[" + mConnectionId + "] transmitting \"" + node.toString() + "\"");
+        }
+        if(mSendBinaryMessages) {
+            byte[] data = getMapper().writeValueAsBytes(node);
+            transmit(data, 0, data.length);
+        } else {
+            String data = getMapper().writeValueAsString(node);
+            transmit(data);
+        }
+    }
 
 	@Override
 	public void onOpen(Connection connection) {
@@ -96,40 +148,54 @@ public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket,
 		super.onClose();
 		mConnection = null;
 	}
+
+    private void onMessage(JsonNode message) {
+        if(LOG.isTraceEnabled()) {
+            LOG.trace("[" + mConnectionId + "] received \"" + message.toString() + "\"");
+        }
+        if(message.isObject()) {
+            ObjectNode messageObj = ObjectNode.class.cast(message);
+
+            // requests and notifications
+            if(messageObj.has("method")) {
+                if(messageObj.has("id")) {
+                    handleRequest(messageObj);
+                } else {
+                    handleNotification(messageObj);
+                }
+            }
+            // responses
+            if(messageObj.has("result") || messageObj.has("error")) {
+                if(messageObj.has("id")) {
+                    handleResponse(messageObj);
+                }
+            }
+        }
+    }
 	
 	@Override
 	public void onMessage(String data) {
-        if(LOG.isTraceEnabled()) {
-		    LOG.trace("[" + mConnectionId + "] received \"" + data + "\"");
+        if(mAcceptTextMessages) {
+            try {
+                onMessage(getMapper().readTree(data));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-		try {
-			JsonNode message = getMapper().readTree(data);
-			if(message.isObject()) {
-				ObjectNode messageObj = ObjectNode.class.cast(message);
-				
-				// requests and notifications
-				if(messageObj.has("method")) {
-					if(messageObj.has("id")) {
-						handleRequest(messageObj);
-					} else {
-						handleNotification(messageObj);
-					}
-				}
-				// responses
-				if(messageObj.has("result") || messageObj.has("error")) {
-					if(messageObj.has("id")) {
-						handleResponse(messageObj);
-					}
-				}
-			}
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
 	}
+
+    @Override
+    public void onMessage(byte[] data, int offset, int length) {
+        if(mAcceptBinaryMessages) {
+            InputStream is = new ByteArrayInputStream(data, offset, length);
+            try {
+                onMessage(getMapper().readTree(is));
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     private void applyConnectionParameters() {
         if(mConnection != null) {
@@ -141,17 +207,17 @@ public class JsonRpcWsConnection extends JsonRpcConnection implements WebSocket,
 	
 	@Override
 	public void sendRequest(ObjectNode request) throws IOException {
-		transmit(request.toString());
+        transmit(request);
 	}
 
 	@Override
 	public void sendResponse(ObjectNode response) throws IOException {
-		transmit(response.toString());
+        transmit(response);
 	}
 	
 	@Override
 	public void sendNotification(ObjectNode notification) throws IOException {
-		transmit(notification.toString());
+		transmit(notification);
 	}
 	
 }

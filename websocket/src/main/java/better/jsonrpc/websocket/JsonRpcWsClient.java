@@ -13,7 +13,8 @@ import org.eclipse.jetty.websocket.WebSocketClientFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class JsonRpcWsClient extends JsonRpcWsConnection implements WebSocket, OnTextMessage {
+public class JsonRpcWsClient extends JsonRpcWsConnection
+        implements WebSocket, WebSocket.OnTextMessage, WebSocket.OnBinaryMessage {
 
 	/** URI for the service used */
 	private URI mServiceUri;
