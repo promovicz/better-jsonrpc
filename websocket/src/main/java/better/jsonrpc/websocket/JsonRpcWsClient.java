@@ -35,7 +35,6 @@ public class JsonRpcWsClient extends JsonRpcWsConnection implements WebSocket, O
 
     public JsonRpcWsClient(URI serviceUri, String protocol, WebSocketClientFactory clientFactory) {
         this(serviceUri, protocol, clientFactory.newWebSocketClient(), new ObjectMapper());
-        mClient.setProtocol(protocol);
     }
 
     public JsonRpcWsClient(URI serviceUri, String protocol) {
@@ -47,7 +46,6 @@ public class JsonRpcWsClient extends JsonRpcWsConnection implements WebSocket, O
             e.printStackTrace();
         }
         mClient = clientFactory.newWebSocketClient();
-        mClient.setProtocol(mServiceProtocol);
     }
 
     public WebSocketClient getWebSocketClient() {
@@ -58,6 +56,7 @@ public class JsonRpcWsClient extends JsonRpcWsConnection implements WebSocket, O
         if(LOG.isDebugEnabled()) {
             LOG.debug("[" + mConnectionId + "] connecting");
         }
+        mClient.setProtocol(mServiceProtocol);
 		mClient.open(mServiceUri, this);
 	}
 
@@ -67,6 +66,7 @@ public class JsonRpcWsClient extends JsonRpcWsConnection implements WebSocket, O
         if(LOG.isDebugEnabled()) {
             LOG.debug("[" + mConnectionId + "] connecting with timeout of " + maxWait + " " + maxWaitUnit);
         }
+        mClient.setProtocol(mServiceProtocol);
         mClient.open(mServiceUri, this, maxWait, maxWaitUnit);
     }
 
