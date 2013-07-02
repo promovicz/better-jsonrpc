@@ -91,7 +91,7 @@ public abstract class ProxyUtil {
 		}
 
 		// now create the proxy
-		return Proxy.newProxyInstance(classLoader, interfaces.toArray(new Class<?>[0]),
+		return Proxy.newProxyInstance(classLoader, interfaces.toArray(new Class<?>[interfaces.size()]),
 			new InvocationHandler() {
 			public Object invoke(Object proxy, Method method, Object[] args)
 				throws Throwable {
