@@ -1,5 +1,6 @@
 package better.jsonrpc.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -145,7 +146,8 @@ public abstract class ProxyUtil {
 					throws Throwable {
 					JsonRpcClient client = connection.getClient();
 					Object arguments = ReflectionUtil.parseArguments(method, args, useNamedParams);
-					if(method.getAnnotation(JsonRpcNotification.class) != null) {
+                    boolean isNotification = ReflectionUtil.isNotification(method);
+					if(isNotification) {
 						client.invokeNotification(method.getName(), arguments, connection);
 						return null;
 					} else {

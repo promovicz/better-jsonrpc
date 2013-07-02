@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import better.jsonrpc.annotations.JsonRpcNotification;
 import better.jsonrpc.annotations.JsonRpcParam;
 
 /**
@@ -31,7 +32,7 @@ public abstract class ReflectionUtil {
 
 	/**
 	 * Finds methods with the given name on the given class.
-	 * @param clazz the class
+	 * @param clazzes the classes
 	 * @param name the method name
 	 * @return the methods
 	 */
@@ -212,5 +213,29 @@ public abstract class ReflectionUtil {
 			return arguments;
 		}
 	}
+
+    public static boolean isNotification(Method method) {
+        return getAnnotation(method, JsonRpcNotification.class) != null;
+    }
+
+    public static class ReflectedInterface {
+        private final Class<?> mClass;
+        private final HashMap<String, ReflectedMethod> mMethods;
+        public ReflectedInterface(Class<?> clazz) {
+            mClass = clazz;
+            mMethods = new HashMap<String, ReflectedMethod>();
+        }
+    }
+
+    public static class ReflectedMethod {
+        Method mMethod;
+        String mName;
+        boolean mIsNotification = false;
+        public ReflectedMethod(Method method) {
+            mMethod = method;
+            mName = method.getName();
+            mIsNotification = isNotification(method);
+        }
+    }
 
 }
