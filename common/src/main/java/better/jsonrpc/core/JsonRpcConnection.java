@@ -122,7 +122,7 @@ public abstract class JsonRpcConnection {
     }
 
     /** Create and return a client proxy */
-    public Object makeProxy(Class<?> clazz) {
+    public <T> T makeProxy(Class<T> clazz) {
         return ProxyUtil.createClientProxy(clazz.getClassLoader(), clazz, this);
     }
 
