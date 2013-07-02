@@ -53,7 +53,23 @@ public class JsonRpcWsClient extends JsonRpcWsConnection
         return mClient;
     }
 
-	public void connect() throws IOException {
+    public URI getServiceUri() {
+        return mServiceUri;
+    }
+
+    public void setServiceUri(URI serviceUri) {
+        this.mServiceUri = serviceUri;
+    }
+
+    public String getServiceProtocol() {
+        return mServiceProtocol;
+    }
+
+    public void setServiceProtocol(String serviceProtocol) {
+        this.mServiceProtocol = serviceProtocol;
+    }
+
+    public void connect() throws IOException {
         if(LOG.isDebugEnabled()) {
             LOG.debug("[" + mConnectionId + "] connecting");
         }
