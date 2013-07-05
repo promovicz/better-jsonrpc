@@ -3,13 +3,10 @@ package better.jsonrpc.websocket;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.jetty.websocket.WebSocket;
-import org.eclipse.jetty.websocket.WebSocket.OnTextMessage;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -17,6 +14,11 @@ import better.jsonrpc.core.JsonRpcConnection;
 
 public class JsonRpcWsConnection extends JsonRpcConnection
         implements WebSocket, WebSocket.OnTextMessage, WebSocket.OnBinaryMessage {
+
+    private static final String KEEPALIVE_REQUEST_STRING = "k";
+    private static final byte[] KEEPALIVE_REQUEST_BINARY = new byte[] {'k'};
+    private static final String KEEPALIVE_RESPONSE_STRING = "a";
+    private static final byte[] KEEPALIVE_RESPONSE_BINARY = new byte[] {'a'};
 	
 	/** Currently active websocket connection */
 	private Connection mConnection;
@@ -38,6 +40,12 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 
     /** Whether to send binary messages (text is the default) */
     private boolean mSendBinaryMessages = false;
+
+    /** Whether to send keep-alive frames */
+    private boolean mSendKeepAlives = false;
+
+    /** Whether to answer keep-alive requests */
+    private boolean mAnswerKeepAlives = false;
 	
 	public JsonRpcWsConnection(ObjectMapper mapper) {
 		super(mapper);
@@ -92,6 +100,22 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 
     public void setSendBinaryMessages(boolean sendBinaryMessages) {
         this.mSendBinaryMessages = sendBinaryMessages;
+    }
+
+    public boolean isSendKeepAlives() {
+        return mSendKeepAlives;
+    }
+
+    public void setSendKeepAlives(boolean sendKeepAlives) {
+        this.mSendKeepAlives = sendKeepAlives;
+    }
+
+    public boolean isAnswerKeepAlives() {
+        return mAnswerKeepAlives;
+    }
+
+    public void setAnswerKeepAlives(boolean answerKeepAlives) {
+        this.mAnswerKeepAlives = answerKeepAlives;
     }
 
     @Override
@@ -176,6 +200,18 @@ public class JsonRpcWsConnection extends JsonRpcConnection
 	@Override
 	public void onMessage(String data) {
         if(mAcceptTextMessages) {
+            // answer keep-alive requests
+            if(mAnswerKeepAlives) {
+                if(data.equals(KEEPALIVE_REQUEST_STRING)) {
+                    try {
+                        transmit(KEEPALIVE_RESPONSE_STRING);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return;
+                }
+            }
+            // handle normal payload
             try {
                 onMessage(getMapper().readTree(data));
             } catch (IOException e) {
@@ -187,6 +223,18 @@ public class JsonRpcWsConnection extends JsonRpcConnection
     @Override
     public void onMessage(byte[] data, int offset, int length) {
         if(mAcceptBinaryMessages) {
+            // answer keep-alive requests
+            if(mAnswerKeepAlives) {
+                if(length == 1 && data[offset] == 'k') {
+                    try {
+                        transmit(KEEPALIVE_RESPONSE_BINARY, 0, KEEPALIVE_RESPONSE_BINARY.length);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return;
+                }
+            }
+            // handle normal payload
             InputStream is = new ByteArrayInputStream(data, offset, length);
             try {
                 onMessage(getMapper().readTree(is));
@@ -202,6 +250,16 @@ public class JsonRpcWsConnection extends JsonRpcConnection
             mConnection.setMaxIdleTime(mMaxIdleTime);
             mConnection.setMaxTextMessageSize(mMaxTextMessageSize);
             mConnection.setMaxBinaryMessageSize(mMaxBinaryMessageSize);
+        }
+    }
+
+    public void sendKeepAlive() throws IOException {
+        if(mSendKeepAlives) {
+            if(mSendBinaryMessages) {
+                transmit(KEEPALIVE_REQUEST_BINARY, 0, KEEPALIVE_REQUEST_BINARY.length);
+            } else {
+                transmit(KEEPALIVE_REQUEST_STRING);
+            }
         }
     }
 	
