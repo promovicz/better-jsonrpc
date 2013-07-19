@@ -223,16 +223,21 @@ public class JsonRpcWsConnection extends JsonRpcConnection
     @Override
     public void onMessage(byte[] data, int offset, int length) {
         if(mAcceptBinaryMessages) {
-            // answer keep-alive requests
-            if(mAnswerKeepAlives) {
-                if(length == 1 && data[offset] == 'k') {
-                    try {
-                        transmit(KEEPALIVE_RESPONSE_BINARY, 0, KEEPALIVE_RESPONSE_BINARY.length);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            // handle keep-alive frames
+            if(length == 1) {
+                if(data[offset] == 'k') {
+                    if(mAnswerKeepAlives) {
+                        try {
+                            transmit(KEEPALIVE_RESPONSE_BINARY, 0, KEEPALIVE_RESPONSE_BINARY.length);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    return;
                 }
+                if(data[offset] == 'a') {
+                    // ignore for now
+                }
+                return;
             }
             // handle normal payload
             InputStream is = new ByteArrayInputStream(data, offset, length);
