@@ -184,7 +184,7 @@ public abstract class JsonRpcConnection {
             try {
                 mServer.handleRequest(mServerHandler, request, this);
             } catch (Throwable throwable) {
-                throwable.printStackTrace();
+                LOG.error("Exception handling request", throwable);
             }
         }
 	}
@@ -192,7 +192,11 @@ public abstract class JsonRpcConnection {
     /** Dispatch an incoming response (for subclasses to call) */
 	public void handleResponse(ObjectNode response) {
 		if(mClient != null) {
+            try {
 			mClient.handleResponse(response, this);
+            } catch (Throwable throwable) {
+                LOG.error("Exception handling response", throwable);
+            }
 		}
 	}
 
@@ -202,7 +206,7 @@ public abstract class JsonRpcConnection {
             try {
                 mServer.handleRequest(mServerHandler, notification, this);
             } catch (Throwable throwable) {
-                throwable.printStackTrace();
+                LOG.error("Exception handling notification", throwable);
             }
         }
 	}
