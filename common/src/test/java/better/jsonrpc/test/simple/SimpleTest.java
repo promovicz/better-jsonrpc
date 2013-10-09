@@ -1,7 +1,6 @@
 package better.jsonrpc.test.simple;
 
 import better.jsonrpc.client.JsonRpcClient;
-import better.jsonrpc.client.JsonRpcClientException;
 import better.jsonrpc.client.JsonRpcClientTimeout;
 import better.jsonrpc.core.JsonRpcExecutorConnection;
 import better.jsonrpc.core.JsonRpcLocalConnection;
@@ -9,15 +8,12 @@ import better.jsonrpc.server.JsonRpcServer;
 import better.jsonrpc.test.simple.model.SimpleAddress;
 import better.jsonrpc.test.simple.model.SimplePerson;
 import better.jsonrpc.test.simple.rpc.ISimpleServer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 /**
  * A simple functional test of the whole library in default configuration
