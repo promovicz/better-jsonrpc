@@ -1,13 +1,13 @@
 package better.jsonrpc.util;
 
+import better.jsonrpc.client.JsonRpcHttpClient;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import better.jsonrpc.client.JsonRpcHttpClient;
 
 public abstract class HttpProxyUtil {
 

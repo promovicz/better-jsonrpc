@@ -1,16 +1,14 @@
 package better.jsonrpc.core;
 
-import java.io.IOException;
-import java.util.Vector;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import better.jsonrpc.client.JsonRpcClient;
 import better.jsonrpc.server.JsonRpcServer;
-
 import better.jsonrpc.util.ProxyUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.log4j.Logger;
+
+import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * JSON-RPC connections

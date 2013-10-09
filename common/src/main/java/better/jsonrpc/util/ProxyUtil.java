@@ -1,6 +1,9 @@
 package better.jsonrpc.util;
 
-import java.lang.annotation.Annotation;
+import better.jsonrpc.client.JsonRpcClient;
+import better.jsonrpc.core.JsonRpcConnection;
+import org.apache.log4j.Logger;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -9,11 +12,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import better.jsonrpc.annotations.JsonRpcNotification;
-import better.jsonrpc.client.JsonRpcClient;
-import better.jsonrpc.core.JsonRpcConnection;
-import org.apache.log4j.Logger;
 
 /**
  * Utilities for create client proxies.

@@ -1,5 +1,8 @@
 package better.jsonrpc.util;
 
+import better.jsonrpc.annotations.JsonRpcNotification;
+import better.jsonrpc.annotations.JsonRpcParam;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -9,9 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import better.jsonrpc.annotations.JsonRpcNotification;
-import better.jsonrpc.annotations.JsonRpcParam;
 
 /**
  * Utilities for reflection.

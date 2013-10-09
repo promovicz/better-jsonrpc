@@ -1,15 +1,12 @@
 package better.jsonrpc.server;
 
-import java.util.logging.Logger;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eclipse.jetty.websocket.WebSocket;
+import org.eclipse.jetty.websocket.WebSocketServlet;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-
-import org.eclipse.jetty.websocket.WebSocket;
-import org.eclipse.jetty.websocket.WebSocketServlet;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class JsonRpcWsServlet extends WebSocketServlet {
 	

@@ -1,15 +1,14 @@
 package better.jsonrpc.server;
 
+import better.jsonrpc.util.Base64;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import better.jsonrpc.util.Base64;
 
 public class JsonRpcHttp {
 

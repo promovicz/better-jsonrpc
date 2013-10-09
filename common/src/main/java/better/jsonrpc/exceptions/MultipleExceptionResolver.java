@@ -1,9 +1,9 @@
 package better.jsonrpc.exceptions;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.util.LinkedList;
 import java.util.List;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * {@link ExceptionResolver} that supports the use

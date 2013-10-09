@@ -1,17 +1,14 @@
 package better.jsonrpc.websocket;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eclipse.jetty.websocket.WebSocket;
+import org.eclipse.jetty.websocket.WebSocketClient;
+import org.eclipse.jetty.websocket.WebSocketClientFactory;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-
-import org.eclipse.jetty.websocket.WebSocket;
-import org.eclipse.jetty.websocket.WebSocket.OnTextMessage;
-import org.eclipse.jetty.websocket.WebSocketClient;
-import org.eclipse.jetty.websocket.WebSocketClientFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonRpcWsClient extends JsonRpcWsConnection
         implements WebSocket, WebSocket.OnTextMessage, WebSocket.OnBinaryMessage {

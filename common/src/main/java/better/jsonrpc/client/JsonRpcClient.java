@@ -1,17 +1,20 @@
 package better.jsonrpc.client;
 
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import better.jsonrpc.core.JsonRpcConnection;
 import better.jsonrpc.exceptions.DefaultExceptionResolver;
 import better.jsonrpc.exceptions.ExceptionResolver;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.log4j.Logger;
+
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A JSON-RPC client

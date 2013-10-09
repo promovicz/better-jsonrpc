@@ -1,5 +1,7 @@
 package better.jsonrpc.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -9,8 +11,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A JSON-RPC client that uses the HTTP protocol.

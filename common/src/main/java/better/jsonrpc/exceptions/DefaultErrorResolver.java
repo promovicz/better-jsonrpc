@@ -1,9 +1,9 @@
 package better.jsonrpc.exceptions;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.lang.reflect.Method;
 import java.util.List;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * An {@link ErrorResolver} that puts type information into the

@@ -1,12 +1,11 @@
 package better.jsonrpc.exceptions;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 import better.jsonrpc.client.JsonRpcClientException;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.log4j.Logger;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Default implementation of the {@link ExceptionResolver}

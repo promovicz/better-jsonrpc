@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;

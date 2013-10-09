@@ -1,14 +1,13 @@
 package better.jsonrpc.exceptions;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
 import better.jsonrpc.annotations.JsonRpcError;
 import better.jsonrpc.annotations.JsonRpcErrors;
 import better.jsonrpc.exceptions.DefaultErrorResolver.ErrorData;
 import better.jsonrpc.util.ReflectionUtil;
-
 import com.fasterxml.jackson.databind.JsonNode;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * {@link ErrorResolver} that uses annotations.
