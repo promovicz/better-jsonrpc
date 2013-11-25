@@ -177,7 +177,7 @@ public abstract class JsonRpcConnection {
     }
 
     /** Dispatch an incoming request (for subclasses to call) */
-	public void handleRequest(ObjectNode request) {
+	protected void handleRequest(ObjectNode request) {
 		if(mServer != null) {
             try {
                 mServer.handleRequest(mServerHandler, request, this);
@@ -188,7 +188,7 @@ public abstract class JsonRpcConnection {
 	}
 
     /** Dispatch an incoming response (for subclasses to call) */
-	public void handleResponse(ObjectNode response) {
+	protected void handleResponse(ObjectNode response) {
 		if(mClient != null) {
             try {
 			mClient.handleResponse(response, this);
@@ -199,7 +199,7 @@ public abstract class JsonRpcConnection {
 	}
 
     /** Dispatch an incoming notification (for subclasses to call) */
-	public void handleNotification(ObjectNode notification) {
+	protected void handleNotification(ObjectNode notification) {
 		if(mServer != null) {
             try {
                 mServer.handleRequest(mServerHandler, notification, this);
