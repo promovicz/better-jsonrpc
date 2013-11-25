@@ -48,8 +48,6 @@ public class JsonRpcServer {
     /** Protocol interfaces for this server*/
     private Class<?>[] mRemoteInterfaces;
 
-    /** Enable/disable exception rethrow */
-	private boolean mRethrowExceptions = false;
     /** Error resolver to be used */
     private ErrorResolver mErrorResolver = null;
 
@@ -179,11 +177,6 @@ public class JsonRpcServer {
             }
 			
 			connection.sendResponse(response);
-		}
-		
-		// rethrow if applicable
-		if(thrown != null && mRethrowExceptions) {
-			throw new RuntimeException(thrown);
 		}
 	}
 	
@@ -571,15 +564,6 @@ public class JsonRpcServer {
 	 */
 	public void setBackwardsCompatible(boolean backwardsCompatible) {
 		this.mBackwardsCompatible = backwardsCompatible;
-	}
-
-	/**
-	 * Sets whether or not the server should re-throw exceptions.
-	 *
-	 * @param rethrowExceptions true or false
-	 */
-	public void setRethrowExceptions(boolean rethrowExceptions) {
-		this.mRethrowExceptions = rethrowExceptions;
 	}
 
 	/**
