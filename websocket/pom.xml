@@ -1,40 +1,41 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <parent>
-    <groupId>better</groupId>
-    <artifactId>better-jsonrpc</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>better-jsonrpc-websocket</artifactId>
+    <parent>
+        <groupId>better</groupId>
+        <artifactId>better-jsonrpc</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-  <name>Better JSON-RPC WebSocket Transport</name>
+    <artifactId>better-jsonrpc-websocket</artifactId>
 
-  <description>
-    This package integrates Better JSON-RPC with the Jetty WebSocket implementation.
-    It can be used to implement actual JSON-RPC clients and servers.
-  </description>
+    <name>Better JSON-RPC WebSocket Transport</name>
 
-  <packaging>jar</packaging>
+    <description>
+        This package integrates Better JSON-RPC with the Jetty WebSocket implementation.
+        It can be used to implement actual JSON-RPC clients and servers.
+    </description>
 
-  <dependencies>
-    <dependency>
-      <groupId>better</groupId>
-      <artifactId>better-jsonrpc-common</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>${jackson.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-websocket</artifactId>
-      <version>${jetty.version}</version>
-    </dependency>
-  </dependencies>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>better</groupId>
+            <artifactId>better-jsonrpc-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-websocket</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

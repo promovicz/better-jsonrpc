@@ -1,50 +1,52 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <groupId>better</groupId>
-  <artifactId>better-jsonrpc</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Better JSON-RPC</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <packaging>pom</packaging>
+    <modelVersion>4.0.0</modelVersion>
 
-  <description>
-    Better JSON-RPC is an implementation of the JSON-RPC protocol using annotated Java interfaces.
-    It currently supports JSON-RPC 2.0 as well as backwards-compatibility with JSON-RPC 1.0.
-  </description>
+    <groupId>better</groupId>
+    <artifactId>better-jsonrpc</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Better JSON-RPC</name>
 
-  <modules>
-    <module>annotations</module>
-    <module>common</module>
-    <module>websocket</module>
-  </modules>
+    <packaging>pom</packaging>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <description>
+        Better JSON-RPC is an implementation of the JSON-RPC protocol using annotated Java interfaces.
+        It currently supports JSON-RPC 2.0 as well as backwards-compatibility with JSON-RPC 1.0.
+    </description>
 
-    <java.version>1.6</java.version>
+    <modules>
+        <module>annotations</module>
+        <module>common</module>
+        <module>websocket</module>
+    </modules>
 
-    <log4j.version>1.2.17</log4j.version>
-    <jackson.version>2.3.0</jackson.version>
-    <jetty.version>8.1.14.v20131031</jetty.version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <junit.version>4.11</junit.version>
+        <java.version>1.6</java.version>
 
-    <maven-compiler.version>3.1</maven-compiler.version>
-  </properties>
+        <log4j.version>1.2.17</log4j.version>
+        <jackson.version>2.3.0</jackson.version>
+        <jetty.version>8.1.14.v20131031</jetty.version>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven-compiler.version}</version>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  
+        <junit.version>4.11</junit.version>
+
+        <maven-compiler.version>3.1</maven-compiler.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
