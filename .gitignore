@@ -1,11 +1,4 @@
-.classpath
-.project
-.settings
 **/*.iml
-**/.project
-**/.settings
-**/.classpath
 **/bin
 **/gen
-**/gen-external-apklibs
 **/target
