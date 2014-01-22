@@ -211,9 +211,10 @@ public class JsonRpcWsConnection extends JsonRpcConnection
             }
             // handle normal payload
             try {
-                onMessage(getMapper().readTree(data));
+                JsonNode node = getMapper().readTree(data);
+                onMessage(node);
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.error("Exception handling message", e);
             }
         }
 	}
@@ -240,10 +241,11 @@ public class JsonRpcWsConnection extends JsonRpcConnection
             // handle normal payload
             InputStream is = new ByteArrayInputStream(data, offset, length);
             try {
-                onMessage(getMapper().readTree(is));
+                JsonNode node = getMapper().readTree(is);
+                onMessage(node);
                 is.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.error("Exception handling message", e);
             }
         }
     }

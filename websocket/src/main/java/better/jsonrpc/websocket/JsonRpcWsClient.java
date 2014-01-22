@@ -41,7 +41,7 @@ public class JsonRpcWsClient extends JsonRpcWsConnection
         try {
             clientFactory.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Error creating WS client factory", e);
         }
         mClient = clientFactory.newWebSocketClient();
     }
