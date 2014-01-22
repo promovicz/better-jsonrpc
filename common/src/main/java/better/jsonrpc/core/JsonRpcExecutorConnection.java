@@ -9,9 +9,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 /**
- * A variant of local connections using executors
+ * In-process connections using executors
+ *
+ * These come in pairs and perform their work on a provided executor.
+ *
+ * JSON structures are passed directly.
  */
-public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
+public class JsonRpcExecutorConnection extends JsonRpcConnection {
 
     /**
      * Create a local connected pair of connections
@@ -71,6 +75,9 @@ public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
     /** Executor used to decouple the connection */
     Executor mExecutor;
 
+    /** The partner connection of this connection */
+    JsonRpcExecutorConnection mOtherConnection;
+
     /**
      * Main constructor
      *
@@ -87,16 +94,29 @@ public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
         return mExecutor;
     }
 
+    /** @return the partner connection of this connection */
+    public JsonRpcExecutorConnection getOtherConnection() {
+        return mOtherConnection;
+    }
+
+    /** @param otherConnection to use from now on */
+    public void setOtherConnection(JsonRpcExecutorConnection otherConnection) {
+        this.mOtherConnection = otherConnection;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isConnected() {
+        return mOtherConnection != null;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void sendRequest(final ObjectNode request) throws Exception {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                try {
-                    JsonRpcExecutorConnection.super.sendRequest(request);
-                } catch (Exception e) {
-                }
+                mOtherConnection.handleRequest(request);
             }
         });
     }
@@ -107,10 +127,7 @@ public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                try {
-                    JsonRpcExecutorConnection.super.sendResponse(response);
-                } catch (Exception e) {
-                }
+                mOtherConnection.handleResponse(response);
             }
         });
     }
@@ -121,10 +138,7 @@ public class JsonRpcExecutorConnection extends JsonRpcLocalConnection {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                try {
-                    JsonRpcExecutorConnection.super.sendNotification(notification);
-                } catch (Exception e) {
-                }
+                mOtherConnection.handleNotification(notification);
             }
         });
     }
