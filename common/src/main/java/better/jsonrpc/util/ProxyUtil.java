@@ -2,7 +2,8 @@ package better.jsonrpc.util;
 
 import better.jsonrpc.client.JsonRpcClient;
 import better.jsonrpc.core.JsonRpcConnection;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -18,7 +19,7 @@ import java.util.Set;
  */
 public abstract class ProxyUtil {
 
-	private static final Logger LOG = Logger.getLogger(ProxyUtil.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ProxyUtil.class);
 
 	/**
 	 * Creates a composite service using all of the given

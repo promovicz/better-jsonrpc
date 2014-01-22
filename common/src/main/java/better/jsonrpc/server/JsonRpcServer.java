@@ -16,7 +16,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -39,7 +40,7 @@ import java.util.Set;
  */
 public class JsonRpcServer {
 
-	protected static final Logger LOG = Logger.getLogger(JsonRpcServer.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(JsonRpcServer.class);
 
     /** Default error resolver */
 	public static final ErrorResolver DEFAULT_ERRROR_RESOLVER

@@ -2,7 +2,8 @@ package better.jsonrpc.exceptions;
 
 import better.jsonrpc.client.JsonRpcClientException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -17,7 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 public class DefaultExceptionResolver
 	implements ExceptionResolver {
 
-	private static final Logger LOG = Logger.getLogger(DefaultExceptionResolver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultExceptionResolver.class);
 
 	public static final DefaultExceptionResolver INSTANCE = new DefaultExceptionResolver();
 

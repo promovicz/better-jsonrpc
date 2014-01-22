@@ -5,7 +5,8 @@ import better.jsonrpc.server.JsonRpcServer;
 import better.jsonrpc.util.ProxyUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class JsonRpcConnection {
 
     /** Global logger, may be used by subclasses */
-	protected static final Logger LOG = Logger.getLogger(JsonRpcConnection.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(JsonRpcConnection.class);
 
     /** Global counter for connection IDs */
 	private static final AtomicInteger sConnectionIdCounter = new AtomicInteger();

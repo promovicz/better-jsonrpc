@@ -6,7 +6,8 @@ import better.jsonrpc.exceptions.ExceptionResolver;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -34,7 +35,7 @@ public class JsonRpcClient {
     public static final long DEFAULT_REQUEST_TIMEOUT = 15 * 1000;
 
     /** Global logger for clients */
-	private static final Logger LOG = Logger.getLogger(JsonRpcClient.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JsonRpcClient.class);
 
     /** JSON-RPC version to pretend speaking */
 	private static final String JSON_RPC_VERSION = "2.0";
