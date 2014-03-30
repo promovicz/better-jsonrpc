@@ -106,12 +106,6 @@ public class JsonRpcExecutorTransport extends JsonRpcTransport {
 
     /** {@inheritDoc} */
     @Override
-    public boolean isConnected() {
-        return mOtherConnection != null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void sendRequest(final ObjectNode request) throws Exception {
         mExecutor.execute(new Runnable() {
             @Override

@@ -154,8 +154,6 @@ public abstract class JsonRpcTransport {
     }
 
 
-    /** Returns true if the connection is currently connected */
-	abstract public boolean isConnected();
     /** Sends a request through the connection */
 	abstract public void sendRequest(ObjectNode request) throws Exception;
     /** Sends a response through the connection */

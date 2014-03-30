@@ -116,7 +116,6 @@ public class JsonRpcWsTransport extends JsonRpcTransport
         this.mAnswerKeepAlives = answerKeepAlives;
     }
 
-    @Override
 	public boolean isConnected() {
 		return mConnection != null && mConnection.isOpen();
 	}
