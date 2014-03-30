@@ -1,7 +1,7 @@
 package better.jsonrpc.server;
 
 import better.jsonrpc.annotations.JsonRpcParam;
-import better.jsonrpc.core.JsonRpcConnection;
+import better.jsonrpc.core.JsonRpcTransport;
 import better.jsonrpc.exceptions.AnnotationsErrorResolver;
 import better.jsonrpc.exceptions.DefaultErrorResolver;
 import better.jsonrpc.exceptions.ErrorResolver;
@@ -90,7 +90,7 @@ public class JsonRpcServer {
 	 * @param node the {@link JsonNode}
 	 * @throws IOException on error
 	 */
-	public void handleRequest(Object handler, ObjectNode node, JsonRpcConnection connection) throws Throwable {
+	public void handleRequest(Object handler, ObjectNode node, JsonRpcTransport connection) throws Throwable {
         ObjectMapper mapper = connection.getMapper();
 
 		if (LOG.isDebugEnabled()) {

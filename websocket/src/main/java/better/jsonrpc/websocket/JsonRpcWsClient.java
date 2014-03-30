@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class JsonRpcWsClient extends JsonRpcWsConnection
+public class JsonRpcWsClient extends JsonRpcWsTransport
         implements WebSocket, WebSocket.OnTextMessage, WebSocket.OnBinaryMessage {
 
 	/** URI for the service used */

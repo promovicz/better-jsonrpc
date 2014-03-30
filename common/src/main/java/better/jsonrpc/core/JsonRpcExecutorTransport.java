@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
  *
  * JSON structures are passed directly.
  */
-public class JsonRpcExecutorConnection extends JsonRpcConnection {
+public class JsonRpcExecutorTransport extends JsonRpcTransport {
 
     /**
      * Create a local connected pair of connections
@@ -24,7 +24,7 @@ public class JsonRpcExecutorConnection extends JsonRpcConnection {
      *
      * @return list containing exactly 2 connections
      */
-    public static List<JsonRpcExecutorConnection> createExecutorConnectionPair() {
+    public static List<JsonRpcExecutorTransport> createExecutorConnectionPair() {
         return createExecutorConnectionPair(new ObjectMapper());
     }
 
@@ -36,7 +36,7 @@ public class JsonRpcExecutorConnection extends JsonRpcConnection {
      * @param mapper to be used for this connection
      * @return list containing exactly 2 connections
      */
-    public static List<JsonRpcExecutorConnection> createExecutorConnectionPair(ObjectMapper mapper) {
+    public static List<JsonRpcExecutorTransport> createExecutorConnectionPair(ObjectMapper mapper) {
         return createExecutorConnectionPair(mapper, Executors.newCachedThreadPool());
     }
 
@@ -48,7 +48,7 @@ public class JsonRpcExecutorConnection extends JsonRpcConnection {
      * @param executor to be used for decoupling the connnections
      * @return list containing exactly 2 connections
      */
-    public static List<JsonRpcExecutorConnection> createExecutorConnectionPair(Executor executor) {
+    public static List<JsonRpcExecutorTransport> createExecutorConnectionPair(Executor executor) {
         return createExecutorConnectionPair(new ObjectMapper(), executor);
     }
 
@@ -61,10 +61,10 @@ public class JsonRpcExecutorConnection extends JsonRpcConnection {
      * @param executor to be used for decoupling the connnections
      * @return list containing exactly 2 connections
      */
-    public static List<JsonRpcExecutorConnection> createExecutorConnectionPair(ObjectMapper mapper, Executor executor) {
-        List<JsonRpcExecutorConnection> res = new ArrayList<JsonRpcExecutorConnection>(2);
-        JsonRpcExecutorConnection a = new JsonRpcExecutorConnection(mapper, executor);
-        JsonRpcExecutorConnection b = new JsonRpcExecutorConnection(mapper, executor);
+    public static List<JsonRpcExecutorTransport> createExecutorConnectionPair(ObjectMapper mapper, Executor executor) {
+        List<JsonRpcExecutorTransport> res = new ArrayList<JsonRpcExecutorTransport>(2);
+        JsonRpcExecutorTransport a = new JsonRpcExecutorTransport(mapper, executor);
+        JsonRpcExecutorTransport b = new JsonRpcExecutorTransport(mapper, executor);
         a.setOtherConnection(b);
         b.setOtherConnection(a);
         res.add(0, a);
@@ -76,7 +76,7 @@ public class JsonRpcExecutorConnection extends JsonRpcConnection {
     Executor mExecutor;
 
     /** The partner connection of this connection */
-    JsonRpcExecutorConnection mOtherConnection;
+    JsonRpcExecutorTransport mOtherConnection;
 
     /**
      * Main constructor
@@ -84,7 +84,7 @@ public class JsonRpcExecutorConnection extends JsonRpcConnection {
      * @param mapper
      * @param executor
      */
-    public JsonRpcExecutorConnection(ObjectMapper mapper, Executor executor) {
+    public JsonRpcExecutorTransport(ObjectMapper mapper, Executor executor) {
         super(mapper);
         mExecutor = executor;
     }
@@ -95,12 +95,12 @@ public class JsonRpcExecutorConnection extends JsonRpcConnection {
     }
 
     /** @return the partner connection of this connection */
-    public JsonRpcExecutorConnection getOtherConnection() {
+    public JsonRpcExecutorTransport getOtherConnection() {
         return mOtherConnection;
     }
 
     /** @param otherConnection to use from now on */
-    public void setOtherConnection(JsonRpcExecutorConnection otherConnection) {
+    public void setOtherConnection(JsonRpcExecutorTransport otherConnection) {
         this.mOtherConnection = otherConnection;
     }
 

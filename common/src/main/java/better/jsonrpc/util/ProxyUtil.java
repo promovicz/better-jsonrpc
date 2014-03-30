@@ -1,7 +1,7 @@
 package better.jsonrpc.util;
 
 import better.jsonrpc.client.JsonRpcClient;
-import better.jsonrpc.core.JsonRpcConnection;
+import better.jsonrpc.core.JsonRpcTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,13 +107,13 @@ public abstract class ProxyUtil {
 	 * @param <T> the proxy type
 	 * @param classLoader the {@link ClassLoader}
 	 * @param proxyInterface the interface to proxy
-	 * @param connection the {@link JsonRpcConnection}
+	 * @param connection the {@link better.jsonrpc.core.JsonRpcTransport}
 	 * @return the proxied interface
 	 */
 	public static <T> T createClientProxy(
 		ClassLoader classLoader,
 		Class<T> proxyInterface,
-		final JsonRpcConnection connection) {
+		final JsonRpcTransport connection) {
 
 		// create and return the proxy
 		return createClientProxy(
@@ -126,7 +126,7 @@ public abstract class ProxyUtil {
 	 * @param <T> the proxy type
 	 * @param classLoader the {@link ClassLoader}
 	 * @param proxyInterface the interface to proxy
-	 * @param connection the {@link JsonRpcConnection}
+	 * @param connection the {@link better.jsonrpc.core.JsonRpcTransport}
 	 * @return the proxied interface
 	 */
 	@SuppressWarnings("unchecked")
@@ -134,7 +134,7 @@ public abstract class ProxyUtil {
 		ClassLoader classLoader,
 		Class<T> proxyInterface,
 		final boolean useNamedParams,
-		final JsonRpcConnection connection) {
+		final JsonRpcTransport connection) {
 
 		// create and return the proxy
 		return (T)Proxy.newProxyInstance(

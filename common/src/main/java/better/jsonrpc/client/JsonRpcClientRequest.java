@@ -1,6 +1,6 @@
 package better.jsonrpc.client;
 
-import better.jsonrpc.core.JsonRpcConnection;
+import better.jsonrpc.core.JsonRpcTransport;
 import better.jsonrpc.exceptions.DefaultExceptionResolver;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JavaType;
@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class JsonRpcClientRequest {
 
     /** Connection used for the request */
-    JsonRpcConnection mConnection;
+    JsonRpcTransport mConnection;
     /** Client tracking this request */
     JsonRpcClient mClient;
 
@@ -45,7 +45,7 @@ public class JsonRpcClientRequest {
     ObjectNode mResponse;
 
     /** Constructs a client request */
-    public JsonRpcClientRequest(String id, ObjectNode request, JsonRpcConnection connection) {
+    public JsonRpcClientRequest(String id, ObjectNode request, JsonRpcTransport connection) {
         mLock = new ReentrantLock();
         mCondition = mLock.newCondition();
         mId = id;
@@ -61,7 +61,7 @@ public class JsonRpcClientRequest {
     }
 
     /** Returns the connection used */
-    public JsonRpcConnection getConnection() {
+    public JsonRpcTransport getConnection() {
         return mConnection;
     }
 

@@ -1,6 +1,6 @@
 package better.jsonrpc.websocket;
 
-import better.jsonrpc.core.JsonRpcConnection;
+import better.jsonrpc.core.JsonRpcTransport;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -10,7 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class JsonRpcWsConnection extends JsonRpcConnection
+public class JsonRpcWsTransport extends JsonRpcTransport
         implements WebSocket, WebSocket.OnTextMessage, WebSocket.OnBinaryMessage {
 
     private static final String KEEPALIVE_REQUEST_STRING = "k";
@@ -45,7 +45,7 @@ public class JsonRpcWsConnection extends JsonRpcConnection
     /** Whether to answer keep-alive requests */
     private boolean mAnswerKeepAlives = false;
 	
-	public JsonRpcWsConnection(ObjectMapper mapper) {
+	public JsonRpcWsTransport(ObjectMapper mapper) {
 		super(mapper);
 	}
 

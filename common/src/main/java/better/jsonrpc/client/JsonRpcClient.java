@@ -1,6 +1,6 @@
 package better.jsonrpc.client;
 
-import better.jsonrpc.core.JsonRpcConnection;
+import better.jsonrpc.core.JsonRpcTransport;
 import better.jsonrpc.exceptions.DefaultExceptionResolver;
 import better.jsonrpc.exceptions.ExceptionResolver;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -55,14 +55,14 @@ public class JsonRpcClient {
             new Hashtable<String, JsonRpcClientRequest>();
 
     /** Listener for connection state changes */
-    private JsonRpcConnection.Listener mConnectionListener =
-            new JsonRpcConnection.Listener() {
+    private JsonRpcTransport.Listener mConnectionListener =
+            new JsonRpcTransport.Listener() {
                 @Override
-                public void onOpen(JsonRpcConnection connection) {
+                public void onOpen(JsonRpcTransport connection) {
                     handleConnectionChange(connection);
                 }
                 @Override
-                public void onClose(JsonRpcConnection connection) {
+                public void onClose(JsonRpcTransport connection) {
                     handleConnectionChange(connection);
                 }
             };
@@ -117,21 +117,21 @@ public class JsonRpcClient {
     /**
      * Handle binding to a connection
      */
-    public void bindConnection(JsonRpcConnection connection) {
+    public void bindConnection(JsonRpcTransport connection) {
         connection.addListener(mConnectionListener);
     }
 
     /**
      * Handle unbinding from a connection
      */
-    public void unbindConnection(JsonRpcConnection connection) {
+    public void unbindConnection(JsonRpcTransport connection) {
         connection.removeListener(mConnectionListener);
     }
 
     /**
      * Send a request through the connection
      */
-    public void sendRequest(JsonRpcConnection connection, ObjectNode request) throws Exception {
+    public void sendRequest(JsonRpcTransport connection, ObjectNode request) throws Exception {
         // log request
         if (LOG.isDebugEnabled()) {
             LOG.debug("Request: " + request.toString());
@@ -143,7 +143,7 @@ public class JsonRpcClient {
     /**
      * Send a notification through the connection
      */
-    public void sendNotification(JsonRpcConnection connection, ObjectNode notification) throws Exception {
+    public void sendNotification(JsonRpcTransport connection, ObjectNode notification) throws Exception {
         // log notification
         if (LOG.isDebugEnabled()) {
             LOG.debug("Notification: " + notification.toString());
@@ -159,7 +159,7 @@ public class JsonRpcClient {
      *
      * @param connection
      */
-    private void handleConnectionChange(JsonRpcConnection connection) {
+    private void handleConnectionChange(JsonRpcTransport connection) {
         synchronized (mOutstandingRequests) {
             // vector to collect matched requests into
             Vector<JsonRpcClientRequest> matches = new Vector<JsonRpcClientRequest>();
@@ -197,7 +197,7 @@ public class JsonRpcClient {
      * @return remote return value
      * @throws Throwable
      */
-	public Object invokeMethod(String methodName, Object arguments, Type returnType, JsonRpcConnection connection)
+	public Object invokeMethod(String methodName, Object arguments, Type returnType, JsonRpcTransport connection)
 		throws Throwable {
         Object result = null;
         // generate request id
@@ -252,7 +252,7 @@ public class JsonRpcClient {
      * @param arguments
      * @param connection
      */
-	public void invokeNotification(String methodName, Object arguments, JsonRpcConnection connection)
+	public void invokeNotification(String methodName, Object arguments, JsonRpcTransport connection)
         throws Throwable {
         // log about call
         if (LOG.isTraceEnabled()) {
@@ -288,7 +288,7 @@ public class JsonRpcClient {
      * @param connection on which the response arrived
      * @return true if the response was accepted
      */
-	public boolean handleResponse(ObjectNode response, JsonRpcConnection connection) {
+	public boolean handleResponse(ObjectNode response, JsonRpcTransport connection) {
 		JsonNode idNode = response.get("id");
         // check the id, we only use strings
 		if(idNode != null && idNode.isTextual()) {
@@ -322,7 +322,7 @@ public class JsonRpcClient {
      * @return the new request
      */
     private ObjectNode createRequest(
-            String methodName, Object arguments, String id, JsonRpcConnection connection) {
+            String methodName, Object arguments, String id, JsonRpcTransport connection) {
 
         ObjectMapper mapper = connection.getMapper();
 

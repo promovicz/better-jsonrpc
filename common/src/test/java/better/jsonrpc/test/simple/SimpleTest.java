@@ -2,7 +2,7 @@ package better.jsonrpc.test.simple;
 
 import better.jsonrpc.client.JsonRpcClient;
 import better.jsonrpc.client.JsonRpcClientTimeout;
-import better.jsonrpc.core.JsonRpcExecutorConnection;
+import better.jsonrpc.core.JsonRpcExecutorTransport;
 import better.jsonrpc.server.JsonRpcServer;
 import better.jsonrpc.test.simple.model.SimpleAddress;
 import better.jsonrpc.test.simple.model.SimplePerson;
@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class SimpleTest {
 
-    static JsonRpcExecutorConnection connectionA;
-    static JsonRpcExecutorConnection connectionB;
+    static JsonRpcExecutorTransport connectionA;
+    static JsonRpcExecutorTransport connectionB;
 
     static JsonRpcClient client;
     static JsonRpcServer server;
@@ -29,7 +29,7 @@ public class SimpleTest {
 
     static {
         // create a pair of local connections
-        List<JsonRpcExecutorConnection> connections = JsonRpcExecutorConnection.createExecutorConnectionPair();
+        List<JsonRpcExecutorTransport> connections = JsonRpcExecutorTransport.createExecutorConnectionPair();
         connectionA = connections.get(0);
         connectionB = connections.get(1);
 

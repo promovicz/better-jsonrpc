@@ -22,10 +22,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * may or may not be supported in either direction.
  *
  */
-public abstract class JsonRpcConnection {
+public abstract class JsonRpcTransport {
 
     /** Global logger, may be used by subclasses */
-	protected static final Logger LOG = LoggerFactory.getLogger(JsonRpcConnection.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(JsonRpcTransport.class);
 
     /** Global counter for connection IDs */
 	private static final AtomicInteger sConnectionIdCounter = new AtomicInteger();
@@ -75,7 +75,7 @@ public abstract class JsonRpcConnection {
     /**
      * Main constructor
      */
-    public JsonRpcConnection(ObjectMapper mapper) {
+    public JsonRpcTransport(ObjectMapper mapper) {
         mMapper = mapper;
     }
 
@@ -212,8 +212,8 @@ public abstract class JsonRpcConnection {
 
     /** Interface of connection state listeners */
 	public interface Listener {
-		public void onOpen(JsonRpcConnection connection);
-		public void onClose(JsonRpcConnection connection);
+		public void onOpen(JsonRpcTransport connection);
+		public void onClose(JsonRpcTransport connection);
     }
 
     /**
