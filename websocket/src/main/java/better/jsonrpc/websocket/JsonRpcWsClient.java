@@ -68,7 +68,7 @@ public class JsonRpcWsClient extends JsonRpcWsTransport
 
     public void connect() throws IOException {
         if(LOG.isDebugEnabled()) {
-            LOG.debug("[" + mConnectionId + "] connecting");
+            LOG.debug("[" + mTransportId + "] connecting");
         }
         mClient.setProtocol(mServiceProtocol);
 		mClient.open(mServiceUri, this);
@@ -78,7 +78,7 @@ public class JsonRpcWsClient extends JsonRpcWsTransport
             throws TimeoutException, IOException, InterruptedException
     {
         if(LOG.isDebugEnabled()) {
-            LOG.debug("[" + mConnectionId + "] connecting with timeout of " + maxWait + " " + maxWaitUnit);
+            LOG.debug("[" + mTransportId + "] connecting with timeout of " + maxWait + " " + maxWaitUnit);
         }
         mClient.setProtocol(mServiceProtocol);
         mClient.open(mServiceUri, this, maxWait, maxWaitUnit);

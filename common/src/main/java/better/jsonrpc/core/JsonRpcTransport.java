@@ -12,14 +12,14 @@ import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * JSON-RPC connections
+ * JSON-RPC transport
  *
- * These objects represent a single, possibly virtual,
- * connection between JSON-RPC speakers.
+ * This is our protocol abstraction layer, separating
+ * JSON-RPC aspects from lower level protocol details.
  *
- * Depending on the transport type, a connection can
- * be used as an RPC server and/or client. Notifications
- * may or may not be supported in either direction.
+ * A transport can be attached to one server and one client each.
+ * The client may send requests and notifications and will receive responses.
+ * The server receives requests and notifications and creates responses.
  *
  */
 public abstract class JsonRpcTransport {
@@ -28,63 +28,38 @@ public abstract class JsonRpcTransport {
 	protected static final Logger LOG = LoggerFactory.getLogger(JsonRpcTransport.class);
 
     /** Global counter for connection IDs */
-	private static final AtomicInteger sConnectionIdCounter = new AtomicInteger();
+	private static final AtomicInteger sTransportIdCounter = new AtomicInteger();
 
 
     /** Automatically assign connections an ID for debugging and other purposes */
-	protected final int mConnectionId = sConnectionIdCounter.incrementAndGet();
+	protected final int mTransportId = sTransportIdCounter.incrementAndGet();
 
 
-    /**
-     * Object mapper to be used for this connection
-     *
-     * Both client and server should always use this mapper for this connection.
-     */
+    /** Object mapper to be used for this transport */
     ObjectMapper mMapper;
 
-    /**
-     * Server instance attached to this client
-     *
-     * This object is responsible for handling requests and notifications.
-     *
-     * It will also send responses where appropriate.
-     */
+    /** Server instance attached to this transport */
 	JsonRpcServer mServer;
 
-    /**
-     * Client instance attached to this client
-     *
-     * This object is responsible for handling responses.
-     *
-     * It will send requests and notifications where appropriate.
-     */
+    /** Client instance attached to this transport */
 	JsonRpcClient mClient;
 
-    /**
-     * Handler instance for this client
-     *
-     * RPC calls will be dispatched to this through the server.
-     */
+    /** Handler instance for this transport */
 	Object mServerHandler;
 
 
-    /** Connection listeners */
+    /** Transport listeners */
 	Vector<Listener> mListeners = new Vector<Listener>();
 
 
-    /**
-     * Main constructor
-     */
+    /** Main constructor */
     public JsonRpcTransport(ObjectMapper mapper) {
         mMapper = mapper;
     }
 
-    /**
-     * Get the numeric local connection ID
-     * @return
-     */
-    public int getConnectionId() {
-        return mConnectionId;
+    /** @return the ID of this transport */
+    public int getTransportId() {
+        return mTransportId;
     }
 
     /** @return the object mapper for this connection */
@@ -112,7 +87,7 @@ public abstract class JsonRpcTransport {
         }
 
         if(LOG.isDebugEnabled()) {
-            LOG.debug("[" + mConnectionId + "] binding client");
+            LOG.debug("[" + mTransportId + "] binding client");
         }
 
         mClient = client;
@@ -146,7 +121,7 @@ public abstract class JsonRpcTransport {
         }
 
         if(LOG.isDebugEnabled()) {
-            LOG.debug("[" + mConnectionId + "] binding server");
+            LOG.debug("[" + mTransportId + "] binding server");
         }
 
         mServer = server;

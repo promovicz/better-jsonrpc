@@ -140,7 +140,7 @@ public class JsonRpcWsTransport extends JsonRpcTransport
 
     public void transmit(JsonNode node) throws IOException {
         if(LOG.isTraceEnabled()) {
-            LOG.trace("[" + mConnectionId + "] transmitting \"" + node.toString() + "\"");
+            LOG.trace("[" + mTransportId + "] transmitting \"" + node.toString() + "\"");
         }
         if(mSendBinaryMessages) {
             byte[] data = getMapper().writeValueAsBytes(node);
@@ -154,7 +154,7 @@ public class JsonRpcWsTransport extends JsonRpcTransport
 	@Override
 	public void onOpen(Connection connection) {
         if(LOG.isDebugEnabled()) {
-		    LOG.debug("[" + mConnectionId + "] connection open");
+		    LOG.debug("[" + mTransportId + "] connection open");
         }
 		super.onOpen();
 		mConnection = connection;
@@ -164,7 +164,7 @@ public class JsonRpcWsTransport extends JsonRpcTransport
 	@Override
 	public void onClose(int closeCode, String message) {
         if(LOG.isDebugEnabled()) {
-		    LOG.debug("[" + mConnectionId + "] connection close " + closeCode + "/" + message);
+		    LOG.debug("[" + mTransportId + "] connection close " + closeCode + "/" + message);
         }
 		super.onClose();
 		mConnection = null;
@@ -172,7 +172,7 @@ public class JsonRpcWsTransport extends JsonRpcTransport
 
     private void onMessage(JsonNode message) {
         if(LOG.isTraceEnabled()) {
-            LOG.trace("[" + mConnectionId + "] received \"" + message.toString() + "\"");
+            LOG.trace("[" + mTransportId + "] received \"" + message.toString() + "\"");
         }
         if(message.isObject()) {
             ObjectNode messageObj = ObjectNode.class.cast(message);
