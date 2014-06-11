@@ -46,7 +46,7 @@ public class JsonRpcServer {
 	public static final ErrorResolver DEFAULT_ERRROR_RESOLVER
 		= new MultipleErrorResolver(AnnotationsErrorResolver.INSTANCE, DefaultErrorResolver.INSTANCE);
 
-    /** Protocol interfaces for this server*/
+    /** Protocol interfaces for this server */
     private Class<?>[] mRemoteInterfaces;
 
     /** Error resolver to be used */
