@@ -90,7 +90,7 @@ public class JsonRpcServer {
 	 * @param node the {@link JsonNode}
 	 * @throws IOException on error
 	 */
-	public void handleRequest(Object handler, ObjectNode node, JsonRpcTransport connection) throws Throwable {
+	public void handleRequest(Object handler, ObjectNode node, JsonRpcTransport connection) throws IOException {
         ObjectMapper mapper = connection.getMapper();
 
 		if (LOG.isDebugEnabled()) {

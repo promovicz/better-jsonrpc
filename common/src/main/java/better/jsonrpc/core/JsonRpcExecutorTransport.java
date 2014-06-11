@@ -3,6 +3,7 @@ package better.jsonrpc.core;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -106,7 +107,7 @@ public class JsonRpcExecutorTransport extends JsonRpcTransport {
 
     /** {@inheritDoc} */
     @Override
-    public void sendRequest(final ObjectNode request) throws Exception {
+    public void sendRequest(final ObjectNode request) throws IOException {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -117,7 +118,7 @@ public class JsonRpcExecutorTransport extends JsonRpcTransport {
 
     /** {@inheritDoc} */
     @Override
-    public void sendResponse(final ObjectNode response) throws Exception {
+    public void sendResponse(final ObjectNode response) throws IOException {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -128,7 +129,7 @@ public class JsonRpcExecutorTransport extends JsonRpcTransport {
 
     /** {@inheritDoc} */
     @Override
-    public void sendNotification(final ObjectNode notification) throws Exception {
+    public void sendNotification(final ObjectNode notification) throws IOException {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {

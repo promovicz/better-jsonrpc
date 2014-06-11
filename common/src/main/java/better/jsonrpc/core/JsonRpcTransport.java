@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -130,11 +131,11 @@ public abstract class JsonRpcTransport {
 
 
     /** Sends a request through the connection */
-	abstract public void sendRequest(ObjectNode request) throws Exception;
+	abstract public void sendRequest(ObjectNode request) throws IOException;
     /** Sends a response through the connection */
-	abstract public void sendResponse(ObjectNode response) throws Exception;
+	abstract public void sendResponse(ObjectNode response) throws IOException;
     /** Sends a notification through the connection */
-	abstract public void sendNotification(ObjectNode notification) throws Exception;
+	abstract public void sendNotification(ObjectNode notification) throws IOException;
 
     /** Dispatch connection open event (for subclasses to call) */
     protected void onOpen() {
