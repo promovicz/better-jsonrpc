@@ -98,7 +98,7 @@ public class JsonRpcServer {
 		}
 
 		// validate request
-		if (!mBackwardsCompatible && !node.has("jsonrpc") || !node.has("method")) {
+		if ((!mBackwardsCompatible && !node.has("jsonrpc")) || !node.has("method")) {
 			connection.sendResponse(
 				ProtocolUtils.createErrorResponse(mapper,
 					"2.0", "null", -32600, "Invalid Request", null));

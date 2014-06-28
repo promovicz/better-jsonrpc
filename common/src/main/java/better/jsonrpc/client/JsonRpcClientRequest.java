@@ -75,6 +75,16 @@ public class JsonRpcClientRequest {
         return mDisconnected || mResponse != null || mException != null;
     }
 
+    /** Get the JSON request object */
+    public ObjectNode getRequest() {
+        return mRequest;
+    }
+
+    /** Get the JSON response object */
+    public ObjectNode getResponse() {
+        return mResponse;
+    }
+
     /** Should be called when underlying connection fails */
     public void handleDisconnect() {
         mLock.lock();

@@ -1,4 +1,4 @@
-package better.jsonrpc.websocket;
+package better.jsonrpc.jetty.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.jetty.websocket.WebSocket;
@@ -21,7 +21,7 @@ public class JsonRpcWsClient extends JsonRpcWsTransport
 	private WebSocketClient mClient;
 
     public JsonRpcWsClient(URI serviceUri, String protocol, WebSocketClient client, ObjectMapper mapper) {
-        super(mapper);
+        super(mapper, false);
         mServiceUri = serviceUri;
         mServiceProtocol = protocol;
         mClient = client;

@@ -18,7 +18,8 @@
     <modules>
         <module>annotations</module>
         <module>common</module>
-        <module>websocket</module>
+        <module>servlet</module>
+        <module>jetty</module>
     </modules>
 
     <properties>

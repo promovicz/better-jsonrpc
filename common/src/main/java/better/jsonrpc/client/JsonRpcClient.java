@@ -1,5 +1,6 @@
 package better.jsonrpc.client;
 
+import better.jsonrpc.core.JsonRpcConnectedTransport;
 import better.jsonrpc.core.JsonRpcTransport;
 import better.jsonrpc.exceptions.DefaultExceptionResolver;
 import better.jsonrpc.exceptions.ExceptionResolver;
@@ -55,8 +56,8 @@ public class JsonRpcClient {
             new Hashtable<String, JsonRpcClientRequest>();
 
     /** Listener for connection state changes */
-    private JsonRpcTransport.Listener mConnectionListener =
-            new JsonRpcTransport.Listener() {
+    private JsonRpcConnectedTransport.Listener mConnectionListener =
+            new JsonRpcConnectedTransport.Listener() {
                 @Override
                 public void onOpen(JsonRpcTransport connection) {
                     handleConnectionChange(connection);
@@ -118,20 +119,24 @@ public class JsonRpcClient {
      * Handle binding to a connection
      */
     public void bindConnection(JsonRpcTransport connection) {
-        connection.addListener(mConnectionListener);
+        if(connection instanceof JsonRpcConnectedTransport) {
+            ((JsonRpcConnectedTransport)connection).addListener(mConnectionListener);
+        }
     }
 
     /**
      * Handle unbinding from a connection
      */
     public void unbindConnection(JsonRpcTransport connection) {
-        connection.removeListener(mConnectionListener);
+        if(connection instanceof JsonRpcConnectedTransport) {
+            ((JsonRpcConnectedTransport)connection).removeListener(mConnectionListener);
+        }
     }
 
     /**
      * Send a request through the connection
      */
-    public void sendRequest(JsonRpcTransport connection, ObjectNode request) throws Exception {
+    public void sendRequest(JsonRpcTransport connection, JsonRpcClientRequest request) throws Exception {
         // log request
         if (LOG.isDebugEnabled()) {
             LOG.debug("Request: " + request.toString());
@@ -143,7 +148,7 @@ public class JsonRpcClient {
     /**
      * Send a notification through the connection
      */
-    public void sendNotification(JsonRpcTransport connection, ObjectNode notification) throws Exception {
+    public void sendNotification(JsonRpcTransport connection, JsonRpcClientRequest notification) throws Exception {
         // log notification
         if (LOG.isDebugEnabled()) {
             LOG.debug("Notification: " + notification.toString());
@@ -217,7 +222,7 @@ public class JsonRpcClient {
         // request execution
         try {
             // send request
-            sendRequest(connection, requestNode);
+            sendRequest(connection, request);
             // wait for response or other result
             result = request.waitForResponse(returnType);
         } catch (Throwable t) {
@@ -265,7 +270,7 @@ public class JsonRpcClient {
         // execute the request
         try {
             // send request
-		    sendNotification(connection, requestNode);
+		    sendNotification(connection, request);
         } catch (Throwable t) {
             // log about exception
             if (LOG.isTraceEnabled()) {
@@ -337,7 +342,7 @@ public class JsonRpcClient {
         request.put("method", methodName);
 
         // default empty arguments, will be replaced further down
-        request.put("params", mapper.valueToTree(new Object[0]));
+        request.put("params", mapper.valueToTree(EMPTY_PARAMS));
 
         // object array args
         if (arguments!=null && arguments.getClass().isArray()) {
@@ -366,5 +371,7 @@ public class JsonRpcClient {
         // return the request
         return request;
     }
+
+    private static final Object[] EMPTY_PARAMS = new Object[0];
 
 }

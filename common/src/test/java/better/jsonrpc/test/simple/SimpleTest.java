@@ -104,4 +104,11 @@ public class SimpleTest {
         proxy.timeout(5000);
     }
 
+    @Test
+    public void testSequentialCalls() {
+        for(int i = 0; i < 1000; i++) {
+            testPojo();
+        }
+    }
+
 }

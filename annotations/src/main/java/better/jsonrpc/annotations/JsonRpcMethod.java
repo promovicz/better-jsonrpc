@@ -5,16 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Annotation for annotating service parameters as JsonRpc params by name.
- */
-@Target(ElementType.PARAMETER)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JsonRpcParam {
+public @interface JsonRpcMethod {
 
-	/**
-	 * The parameter's name.
-	 */
-	String value();
+    String name() default "";
 
 }

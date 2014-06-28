@@ -1,6 +1,7 @@
 package better.jsonrpc.core;
 
 import better.jsonrpc.client.JsonRpcClient;
+import better.jsonrpc.client.JsonRpcClientRequest;
 import better.jsonrpc.server.JsonRpcServer;
 import better.jsonrpc.util.ProxyUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,10 +48,6 @@ public abstract class JsonRpcTransport {
 
     /** Handler instance for this transport */
 	Object mServerHandler;
-
-
-    /** Transport listeners */
-	Vector<Listener> mListeners = new Vector<Listener>();
 
 
     /** Main constructor */
@@ -131,25 +128,12 @@ public abstract class JsonRpcTransport {
 
 
     /** Sends a request through the connection */
-	abstract public void sendRequest(ObjectNode request) throws IOException;
-    /** Sends a response through the connection */
-	abstract public void sendResponse(ObjectNode response) throws IOException;
+	abstract public void sendRequest(JsonRpcClientRequest request) throws IOException;
     /** Sends a notification through the connection */
-	abstract public void sendNotification(ObjectNode notification) throws IOException;
+	abstract public void sendNotification(JsonRpcClientRequest request) throws IOException;
 
-    /** Dispatch connection open event (for subclasses to call) */
-    protected void onOpen() {
-        for(Listener l: mListeners) {
-            l.onOpen(this);
-        }
-    }
-
-    /** Dispatch connection close event (for subclasses to call) */
-    protected void onClose() {
-        for(Listener l: mListeners) {
-            l.onClose(this);
-        }
-    }
+    /** Sends a response through the connection */
+    abstract public void sendResponse(ObjectNode response) throws IOException;
 
     /** Dispatch an incoming request (for subclasses to call) */
 	protected void handleRequest(ObjectNode request) {
@@ -183,27 +167,5 @@ public abstract class JsonRpcTransport {
             }
         }
 	}
-
-    /** Interface of connection state listeners */
-	public interface Listener {
-		public void onOpen(JsonRpcTransport connection);
-		public void onClose(JsonRpcTransport connection);
-    }
-
-    /**
-     * Add a connection state listener
-     * @param l
-     */
-    public void addListener(Listener l) {
-        mListeners.add(l);
-    }
-
-    /**
-     * Remove the given connection state listener
-     * @param l
-     */
-    public void removeListener(Listener l) {
-        mListeners.remove(l);
-    }
 	
 }

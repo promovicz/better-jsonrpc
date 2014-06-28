@@ -9,13 +9,12 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>better-jsonrpc-websocket</artifactId>
+    <artifactId>better-jsonrpc-servlet</artifactId>
 
-    <name>Better JSON-RPC WebSocket Transport</name>
+    <name>Better JSON-RPC for Servlets</name>
 
     <description>
-        This package integrates Better JSON-RPC with the Jetty WebSocket implementation.
-        It can be used to implement actual JSON-RPC clients and servers.
+        This package integrates Better JSON-RPC with J2EE Servlets
     </description>
 
     <packaging>jar</packaging>
@@ -27,14 +26,14 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-websocket</artifactId>
-            <version>${jetty.version}</version>
+            <groupId>de.undercouch</groupId>
+            <artifactId>bson4jackson</artifactId>
+            <version>${bson4jackson.version}</version>
         </dependency>
     </dependencies>
 

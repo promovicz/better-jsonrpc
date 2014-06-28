@@ -1,5 +1,6 @@
 package better.jsonrpc.core;
 
+import better.jsonrpc.client.JsonRpcClientRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -107,11 +108,22 @@ public class JsonRpcExecutorTransport extends JsonRpcTransport {
 
     /** {@inheritDoc} */
     @Override
-    public void sendRequest(final ObjectNode request) throws IOException {
+    public void sendRequest(final JsonRpcClientRequest request) throws IOException {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                mOtherConnection.handleRequest(request);
+                mOtherConnection.handleRequest(request.getRequest());
+            }
+        });
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void sendNotification(final JsonRpcClientRequest notification) throws IOException {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                mOtherConnection.handleNotification(notification.getRequest());
             }
         });
     }
@@ -127,14 +139,4 @@ public class JsonRpcExecutorTransport extends JsonRpcTransport {
         });
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void sendNotification(final ObjectNode notification) throws IOException {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                mOtherConnection.handleNotification(notification);
-            }
-        });
-    }
 }

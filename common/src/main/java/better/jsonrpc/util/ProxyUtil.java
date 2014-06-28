@@ -1,5 +1,7 @@
 package better.jsonrpc.util;
 
+import better.jsonrpc.annotations.JsonRpcInterface;
+import better.jsonrpc.annotations.JsonRpcMethod;
 import better.jsonrpc.client.JsonRpcClient;
 import better.jsonrpc.core.JsonRpcTransport;
 import org.slf4j.Logger;
@@ -132,9 +134,18 @@ public abstract class ProxyUtil {
 	@SuppressWarnings("unchecked")
 	public static <T> T createClientProxy(
 		ClassLoader classLoader,
-		Class<T> proxyInterface,
+		final Class<T> proxyInterface,
 		final boolean useNamedParams,
 		final JsonRpcTransport connection) {
+
+        String methodPrefix = "";
+        JsonRpcInterface interAnno = proxyInterface.getAnnotation(JsonRpcInterface.class);
+        if(interAnno != null) {
+            if(!interAnno.prefix().isEmpty()) {
+                methodPrefix = interAnno.prefix();
+            }
+        }
+        final String finalPrefix = methodPrefix;
 
 		// create and return the proxy
 		return (T)Proxy.newProxyInstance(
@@ -144,14 +155,21 @@ public abstract class ProxyUtil {
 				public Object invoke(Object proxy, Method method, Object[] args)
 					throws Throwable {
 					JsonRpcClient client = connection.getClient();
+                    String methodName = finalPrefix + method.getName();
+                    JsonRpcMethod methodAnno = method.getAnnotation(JsonRpcMethod.class);
+                    if(methodAnno != null) {
+                        if(!methodAnno.name().isEmpty()) {
+                            methodName = finalPrefix + methodAnno.name();
+                        }
+                    }
 					Object arguments = ReflectionUtil.parseArguments(method, args, useNamedParams);
                     boolean isNotification = ReflectionUtil.isNotification(method);
 					if(isNotification) {
-						client.invokeNotification(method.getName(), arguments, connection);
+						client.invokeNotification(methodName, arguments, connection);
 						return null;
 					} else {
 						return client.invokeMethod(
-								method.getName(), arguments,
+								methodName, arguments,
 								method.getGenericReturnType(), connection);
 					}
 				}

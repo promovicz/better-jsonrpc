@@ -1,5 +1,7 @@
 package better.jsonrpc.util;
 
+import better.jsonrpc.annotations.JsonRpcInterface;
+import better.jsonrpc.annotations.JsonRpcMethod;
 import better.jsonrpc.annotations.JsonRpcNotification;
 import better.jsonrpc.annotations.JsonRpcParam;
 
@@ -47,8 +49,22 @@ public abstract class ReflectionUtil {
 		}
 		Set<Method> methods = new HashSet<Method>();
 		for (Class<?> clazz : clazzes) {
+            String clazzPrefix = "";
+            JsonRpcInterface clazzAnnotation = clazz.getAnnotation(JsonRpcInterface.class);
+            if(clazzAnnotation != null) {
+                if(!clazzAnnotation.prefix().isEmpty()) {
+                    clazzPrefix = clazzAnnotation.prefix();
+                }
+            }
 			for (Method method : clazz.getMethods()) {
-				if (method.getName().equals(name)) {
+                String methodName = clazzPrefix + method.getName();
+                JsonRpcMethod methodAnnotation = method.getAnnotation(JsonRpcMethod.class);
+                if(methodAnnotation != null) {
+                    if(!methodAnnotation.name().isEmpty()) {
+                        methodName = clazzPrefix + methodAnnotation.name();
+                    }
+                }
+				if (methodName.equals(name)) {
 					methods.add(method);
 				}
 			}

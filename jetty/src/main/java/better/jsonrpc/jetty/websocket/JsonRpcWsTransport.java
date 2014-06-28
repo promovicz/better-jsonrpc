@@ -1,5 +1,7 @@
-package better.jsonrpc.websocket;
+package better.jsonrpc.jetty.websocket;
 
+import better.jsonrpc.client.JsonRpcClientRequest;
+import better.jsonrpc.core.JsonRpcConnectedTransport;
 import better.jsonrpc.core.JsonRpcTransport;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,7 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class JsonRpcWsTransport extends JsonRpcTransport
+public class JsonRpcWsTransport extends JsonRpcConnectedTransport
         implements WebSocket, WebSocket.OnTextMessage, WebSocket.OnBinaryMessage {
 
     private static final String KEEPALIVE_REQUEST_STRING = "k";
@@ -45,8 +47,8 @@ public class JsonRpcWsTransport extends JsonRpcTransport
     /** Whether to answer keep-alive requests */
     private boolean mAnswerKeepAlives = false;
 	
-	public JsonRpcWsTransport(ObjectMapper mapper) {
-		super(mapper);
+	public JsonRpcWsTransport(ObjectMapper mapper, boolean connected) {
+		super(mapper, connected);
 	}
 
     public int getMaxIdleTime() {
@@ -129,12 +131,16 @@ public class JsonRpcWsTransport extends JsonRpcTransport
 	public void transmit(String data) throws IOException {
 		if(mConnection != null && mConnection.isOpen()) {
 			mConnection.sendMessage(data);
-		}
+		} else {
+            throw new IOException("Trying to transmit data on a closed transport");
+        }
 	}
 
     public void transmit(byte[] data, int offset, int length) throws IOException {
         if(mConnection != null && mConnection.isOpen()) {
             mConnection.sendMessage(data, offset, length);
+        } else {
+            throw new IOException("Trying to transmit data on a closed transport");
         }
     }
 
@@ -268,18 +274,18 @@ public class JsonRpcWsTransport extends JsonRpcTransport
     }
 	
 	@Override
-	public void sendRequest(ObjectNode request) throws IOException {
-        transmit(request);
+	public void sendRequest(JsonRpcClientRequest request) throws IOException {
+        transmit(request.getRequest());
 	}
+
+    @Override
+    public void sendNotification(JsonRpcClientRequest notification) throws IOException {
+        transmit(notification.getRequest());
+    }
 
 	@Override
 	public void sendResponse(ObjectNode response) throws IOException {
         transmit(response);
-	}
-	
-	@Override
-	public void sendNotification(ObjectNode notification) throws IOException {
-		transmit(notification);
 	}
 	
 }
