@@ -24,6 +24,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Integration test using HTTP
+ *
+ * This tests our own client against our own server
+ * using calls to the ISimpleServer service.
+ *
+ * Communication is done using HTTP on localhost,
+ * with the server being started per-test.
+ */
 public class IntegrationTestHttp {
 
     static final Logger LOG = (Logger) LoggerFactory.getLogger(IntegrationTestHttp.class);

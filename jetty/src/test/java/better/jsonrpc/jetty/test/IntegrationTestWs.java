@@ -21,6 +21,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.*;
 
+/**
+ * Integration test using WebSocket
+ *
+ * This tests our own client against our own server
+ * using calls to the ISimpleServer service.
+ *
+ * Communication is done using a WebSocket connection
+ * on localhost, with the server being started per-test.
+ */
 public class IntegrationTestWs {
 
     static final Logger LOG = (Logger) LoggerFactory.getLogger(IntegrationTestWs.class);
@@ -31,11 +40,11 @@ public class IntegrationTestWs {
     /** URI of server (initialized at start) */
     URI mServerUri;
 
-    /** JSON-RPC client */
-    JsonRpcClient mClient;
-
     /** WS client factors */
     WebSocketClientFactory mWscFactory;
+
+    /** JSON-RPC client */
+    JsonRpcClient mClient;
 
     /** JSON-RPC transport */
     JsonRpcWsClient mWsClient;

@@ -21,6 +21,12 @@ public abstract class JsonRpcHttpServlet extends HttpServlet {
     ObjectMapper mJsonMapper;
     ObjectMapper mBsonMapper;
 
+    /**
+     * Initialize the servlet
+     *
+     * @param config
+     * @throws ServletException
+     */
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);

@@ -9,6 +9,9 @@ import org.eclipse.jetty.io.Buffer;
 
 import java.io.IOException;
 
+/**
+ * Represents a single JSON-RPC HTTP exchange
+ */
 public class JsonRpcHttpExchange extends ContentExchange {
 
     JsonRpcHttpClient mClient;
