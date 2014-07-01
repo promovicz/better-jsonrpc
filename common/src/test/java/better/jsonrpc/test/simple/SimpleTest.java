@@ -92,7 +92,7 @@ public class SimpleTest {
         SimplePerson person = new SimplePerson("Alice", "Archer");
         SimpleAddress address = new SimpleAddress();
         address.setCity("Aberdeen");
-        address.setCity("Archer Alley");
+        address.setStreet("Archer Alley");
         address.setNumber("23e");
         person.setAddress(address);
         SimpleAddress result = proxy.extractAddress(person);
