@@ -1,4 +1,4 @@
-package better.jsonrpc.client;
+package better.jsonrpc.exception;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -7,19 +7,24 @@ import com.fasterxml.jackson.databind.JsonNode;
  * an error occurs.
  */
 @SuppressWarnings("serial")
-public class JsonRpcClientException
-	extends RuntimeException {
+public class JsonRpcException extends RuntimeException {
 
 	private int code;
 	private JsonNode data;
 
+    public JsonRpcException(String message) {
+        super(message);
+        this.code = -1;
+        this.data = null;
+    }
+
 	/**
-	 * Creates the exception.
+	 * Creates an exception
 	 * @param code the code from the server
 	 * @param message the message from the server
 	 * @param data the data from the server
 	 */
-	public JsonRpcClientException(int code, String message, JsonNode data) {
+	public JsonRpcException(int code, String message, JsonNode data) {
 		super(message);
 		this.code 	= code;
 		this.data	= data;

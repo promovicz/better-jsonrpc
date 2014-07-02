@@ -1,7 +1,7 @@
 package better.jsonrpc.jetty.test;
 
 import better.jsonrpc.client.JsonRpcClient;
-import better.jsonrpc.client.JsonRpcClientTimeout;
+import better.jsonrpc.exception.JsonRpcTimeout;
 import better.jsonrpc.jetty.http.JsonRpcHttpClient;
 import better.jsonrpc.jetty.test.model.SimpleAddress;
 import better.jsonrpc.jetty.test.model.SimplePerson;
@@ -161,7 +161,7 @@ public class IntegrationTestHttp {
         Assert.assertTrue(address.equals(result));
     }
 
-    @Test(expected = JsonRpcClientTimeout.class)
+    @Test(expected = JsonRpcTimeout.class)
     public void testTimeout() {
         mProxy.timeout(5000);
     }

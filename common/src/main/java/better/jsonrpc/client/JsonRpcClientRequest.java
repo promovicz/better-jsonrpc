@@ -1,6 +1,10 @@
 package better.jsonrpc.client;
 
 import better.jsonrpc.core.JsonRpcTransport;
+import better.jsonrpc.exception.JsonRpcDisconnect;
+import better.jsonrpc.exception.JsonRpcProtocolError;
+import better.jsonrpc.exception.JsonRpcInterrupted;
+import better.jsonrpc.exception.JsonRpcTimeout;
 import better.jsonrpc.exceptions.DefaultExceptionResolver;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JavaType;
@@ -8,8 +12,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -35,10 +41,12 @@ public class JsonRpcClientRequest {
     Condition mCondition;
     /** Request id */
     String mId;
-    /** Flag to indicate abort by disconnect */
-    boolean mDisconnected;
-    /** Exception that aborted this request */
-    Throwable mException;
+    /** Local exceptions */
+    Throwable mLocalException;
+    /** Remote exceptions (translated from error) */
+    Throwable mRemoteException;
+    /** The return value for the caller */
+    Object mReturn;
     /** JSON request */
     ObjectNode mRequest;
     /** JSON response */
@@ -72,7 +80,7 @@ public class JsonRpcClientRequest {
 
     /** Returns true if this request is done */
     private boolean isDone() {
-        return mDisconnected || mResponse != null || mException != null;
+        return mResponse != null || mLocalException != null;
     }
 
     /** Get the JSON request object */
@@ -87,23 +95,25 @@ public class JsonRpcClientRequest {
 
     /** Should be called when underlying connection fails */
     public void handleDisconnect() {
-        mLock.lock();
-        try {
-            if (!isDone()) {
-                mDisconnected = true;
-                mCondition.signalAll();
-            }
-        } finally {
-            mLock.unlock();
-        }
+        handleLocalException(new JsonRpcDisconnect());
+    }
+
+    /** Should be called when caller times out */
+    public void handleTimeout() {
+        handleLocalException(new JsonRpcTimeout());
+    }
+
+    /** Should be called when caller got interrupted */
+    public void handleInterrupted() {
+        handleLocalException(new JsonRpcInterrupted());
     }
 
     /** Should be called on IO errors, timeouts and other such local abort causes */
-    public void handleException(Throwable exception) {
+    public void handleLocalException(Throwable exception) {
         mLock.lock();
         try {
             if (!isDone()) {
-                mException = exception;
+                mLocalException = exception;
                 mCondition.signalAll();
             }
         } finally {
@@ -133,7 +143,7 @@ public class JsonRpcClientRequest {
      *
      * This call will block, limited by the request timeout.
      */
-    public Object waitForResponse(Type returnType) throws Throwable {
+    public boolean waitForCompletion() throws InterruptedException, TimeoutException {
         mLock.lock();
         try {
             // wait until done or timeout is reached
@@ -143,60 +153,49 @@ public class JsonRpcClientRequest {
                 long timeLeft = timeout - System.currentTimeMillis();
                 // throw on timeout
                 if (timeLeft <= 0) {
-                    mException = new JsonRpcClientTimeout();
-                    mCondition.signalAll();
-                    throw mException;
+                    throw new TimeoutException();
                 }
                 // wait for state changes
-                try {
-                    mCondition.await(timeLeft, TimeUnit.MILLISECONDS);
-                } catch (InterruptedException e) {
-                }
+                mCondition.await(timeLeft, TimeUnit.MILLISECONDS);
             }
-
-            // throw if we got disconnected
-            if (mDisconnected) {
-                throw new JsonRpcClientDisconnect();
-            }
-
-            // detect rpc failures
-            if (mException != null) {
-                throw new RuntimeException("JSON-RPC failure", mException);
-            }
-
-            // detect errors
-            if (mResponse.has("error")
-                    && mResponse.get("error") != null
-                    && !mResponse.get("error").isNull()) {
-                // resolve and throw the exception
-                if (mClient.getExceptionResolver() == null) {
-                    throw DefaultExceptionResolver.INSTANCE.resolveException(mResponse);
-                } else {
-                    throw mClient.getExceptionResolver().resolveException(mResponse);
-                }
-            }
-
-            // convert it to a return object
-            if (mResponse.has("result")
-                    && !mResponse.get("result").isNull()
-                    && mResponse.get("result") != null) {
-                if (returnType == null) {
-                    // XXX warn
-                    return null;
-                }
-                // get the object mapper for conversion
-                ObjectMapper mapper = mConnection.getMapper();
-                // create a parser for the result
-                JsonParser returnJsonParser = mapper.treeAsTokens(mResponse.get("result"));
-                // determine type to convert to
-                JavaType returnJavaType = TypeFactory.defaultInstance().constructType(returnType);
-                // parse, convert and return
-                return mapper.readValue(returnJsonParser, returnJavaType);
-            }
+            return mResponse != null;
         } finally {
             mLock.unlock();
         }
-        return null;
+    }
+
+    public void processResponse(Type returnType) throws IOException {
+        if (mResponse.has("result")) {
+            // get the object mapper for conversion
+            ObjectMapper mapper = mConnection.getMapper();
+            // create a parser for the result
+            JsonParser returnJsonParser = mapper.treeAsTokens(mResponse.get("result"));
+            // determine type to convert to
+            JavaType returnJavaType = TypeFactory.defaultInstance().constructType(returnType);
+            // parse, convert and return
+            mReturn = mapper.readValue(returnJsonParser, returnJavaType);
+        } else if (mResponse.has("error")
+                && mResponse.get("error") != null
+                && !mResponse.get("error").isNull()) {
+            // resolve the exception
+            if (mClient.getExceptionResolver() == null) {
+                mRemoteException = DefaultExceptionResolver.INSTANCE.resolveException(mResponse);
+            } else {
+                mRemoteException = mClient.getExceptionResolver().resolveException(mResponse);
+            }
+        } else {
+            mLocalException = new JsonRpcProtocolError("Invalid response (neither result nor error)");
+        }
+    }
+
+    public Object throwOrReturn() throws Throwable {
+        if (mLocalException != null) {
+            throw mLocalException;
+        } else if (mRemoteException != null) {
+            throw mRemoteException;
+        } else {
+            return mReturn;
+        }
     }
 
 }

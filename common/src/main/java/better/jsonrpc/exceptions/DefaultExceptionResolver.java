@@ -1,6 +1,6 @@
 package better.jsonrpc.exceptions;
 
-import better.jsonrpc.client.JsonRpcClientException;
+import better.jsonrpc.exception.JsonRpcException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,13 +71,13 @@ public class DefaultExceptionResolver
 	}
 
 	/**
-	 * Creates a {@link JsonRpcClientException} from the given
+	 * Creates a {@link better.jsonrpc.exception.JsonRpcException} from the given
 	 * {@link ObjectNode}.
 	 * @param errorObject the error object
 	 * @return the exception
 	 */
-	private JsonRpcClientException createJsonRpcClientException(ObjectNode errorObject) {
-		return new JsonRpcClientException(
+	private JsonRpcException createJsonRpcClientException(ObjectNode errorObject) {
+		return new JsonRpcException(
 			errorObject.get("code").asInt(),
 			errorObject.get("message").asText(),
 			errorObject.get("data"));

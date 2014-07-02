@@ -10,12 +10,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -136,7 +138,7 @@ public class JsonRpcClient {
     /**
      * Send a request through the connection
      */
-    public void sendRequest(JsonRpcTransport connection, JsonRpcClientRequest request) throws Exception {
+    public void sendRequest(JsonRpcTransport connection, JsonRpcClientRequest request) throws IOException {
         // log request
         if (LOG.isDebugEnabled()) {
             LOG.debug("Request: " + request.toString());
@@ -148,7 +150,7 @@ public class JsonRpcClient {
     /**
      * Send a notification through the connection
      */
-    public void sendNotification(JsonRpcTransport connection, JsonRpcClientRequest notification) throws Exception {
+    public void sendNotification(JsonRpcTransport connection, JsonRpcClientRequest notification) throws IOException {
         // log notification
         if (LOG.isDebugEnabled()) {
             LOG.debug("Notification: " + notification.toString());
@@ -203,7 +205,7 @@ public class JsonRpcClient {
      * @throws Throwable
      */
 	public Object invokeMethod(String methodName, Object arguments, Type returnType, JsonRpcTransport connection)
-		throws Throwable {
+		    throws Throwable {
         Object result = null;
         // generate request id
         String id = generateId();
@@ -219,27 +221,37 @@ public class JsonRpcClient {
         synchronized (mOutstandingRequests) {
             mOutstandingRequests.put(id, request);
         }
-        // request execution
+        // send the request
         try {
             // send request
             sendRequest(connection, request);
-            // wait for response or other result
-            result = request.waitForResponse(returnType);
-        } catch (Throwable t) {
-            // log about exception
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("[" + id + "] call to " + methodName + " throws", t);
+            // wait for a response (or error)
+            if(request.waitForCompletion()) {
+                request.processResponse(returnType);
             }
-            // abort the request
-            request.handleException(t);
-            // rethrow for library user to handle
-            throw t;
+        } catch (IOException ioe) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("[" + id + "] exception", ioe);
+            }
+            request.handleLocalException(ioe);
+        } catch (TimeoutException to) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("[" + id + "] request timed out");
+            }
+            request.handleTimeout();
+        } catch (InterruptedException i) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("[" + id + "] request interrupted");
+            }
+            request.handleInterrupted();
         } finally {
             // remove request from client state
             synchronized (mOutstandingRequests) {
                 mOutstandingRequests.remove(id);
             }
         }
+        // process the response
+        result = request.throwOrReturn();
         // log about return
         if (LOG.isTraceEnabled()) {
             LOG.trace("[" + id + "] returning from " + methodName);
@@ -258,7 +270,7 @@ public class JsonRpcClient {
      * @param connection
      */
 	public void invokeNotification(String methodName, Object arguments, JsonRpcTransport connection)
-        throws Throwable {
+            throws Throwable {
         // log about call
         if (LOG.isTraceEnabled()) {
             LOG.trace("[notification] calling " + methodName);
@@ -271,15 +283,11 @@ public class JsonRpcClient {
         try {
             // send request
 		    sendNotification(connection, request);
-        } catch (Throwable t) {
-            // log about exception
+        } catch (IOException ioe) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("[notification] call to " + methodName + " throws", t);
+                LOG.trace("[notification] exception", ioe);
             }
-            // abort the request
-            request.handleException(t);
-            // rethrow
-            throw t;
+            request.handleLocalException(ioe);
         }
         // log about return
         if (LOG.isTraceEnabled()) {

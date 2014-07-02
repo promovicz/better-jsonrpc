@@ -1,11 +1,9 @@
 package better.jsonrpc.jetty.http;
 
 import better.jsonrpc.client.JsonRpcClientRequest;
+import better.jsonrpc.exception.JsonRpcProtocolError;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eclipse.jetty.client.ContentExchange;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpExchange;
-import org.eclipse.jetty.io.Buffer;
 
 import java.io.IOException;
 
@@ -31,7 +29,7 @@ public class JsonRpcHttpExchange extends ContentExchange {
             ObjectNode response = mClient.getMapper().readValue(bytes, ObjectNode.class);
             mClient.getClient().handleResponse(response, mClient);
         } else {
-            mRequest.handleException(new Exception("Duh!? " + getResponseStatus()));
+            mRequest.handleLocalException(new JsonRpcProtocolError("Bad HTTP status code " + getResponseStatus()));
         }
     }
 
@@ -44,13 +42,13 @@ public class JsonRpcHttpExchange extends ContentExchange {
     @Override
     protected void onException(Throwable x) {
         super.onException(x);
-        mRequest.handleException(x);
+        mRequest.handleLocalException(x);
     }
 
     @Override
     protected void onExpire() {
         super.onExpire();
-        mRequest.handleException(new Exception("HTTP timeout"));
+        mRequest.handleTimeout();
     }
 
 }

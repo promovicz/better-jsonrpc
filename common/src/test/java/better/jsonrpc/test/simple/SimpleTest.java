@@ -1,7 +1,7 @@
 package better.jsonrpc.test.simple;
 
 import better.jsonrpc.client.JsonRpcClient;
-import better.jsonrpc.client.JsonRpcClientTimeout;
+import better.jsonrpc.exception.JsonRpcTimeout;
 import better.jsonrpc.core.JsonRpcExecutorTransport;
 import better.jsonrpc.server.JsonRpcServer;
 import better.jsonrpc.test.simple.model.SimpleAddress;
@@ -99,7 +99,7 @@ public class SimpleTest {
         Assert.assertTrue(address.equals(result));
     }
 
-    @Test(expected = JsonRpcClientTimeout.class)
+    @Test(expected = JsonRpcTimeout.class)
     public void testTimeout() {
         proxy.timeout(5000);
     }
