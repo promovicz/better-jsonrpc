@@ -503,7 +503,6 @@ public class JsonRpcServer {
 	 * @return true if the types match, false otherwise
 	 */
 	private boolean isMatchingType(JsonNode node, Class<?> type) {
-
 		if (node.isNull()) {
 			return true;
 
