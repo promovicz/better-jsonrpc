@@ -25,16 +25,16 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <java.version>1.6</java.version>
+        <java.version>1.8</java.version>
         <servlet-api.version>2.5</servlet-api.version>
 
-        <slf4j.version>1.7.5</slf4j.version>
-        <logback.version>1.1.2</logback.version>
-        <jackson.version>2.3.0</jackson.version>
-        <bson4jackson.version>2.3.1</bson4jackson.version>
-        <jetty.version>8.1.15.v20140411</jetty.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <logback.version>1.2.3</logback.version>
+        <jackson.version>2.9.4</jackson.version>
+        <bson4jackson.version>2.9.0</bson4jackson.version>
+        <jetty.version>8.2.0.v20160908</jetty.version>
 
-        <junit.version>4.11</junit.version>
+        <junit.version>4.12</junit.version>
 
         <maven-compiler.version>3.7.0</maven-compiler.version>
         <maven-surefire.version>2.21.0</maven-surefire.version>
