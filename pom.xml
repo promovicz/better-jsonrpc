@@ -36,8 +36,8 @@
 
         <junit.version>4.11</junit.version>
 
-        <maven-compiler.version>3.1</maven-compiler.version>
-        <maven-surefire.version>2.16</maven-surefire.version>
+        <maven-compiler.version>3.7.0</maven-compiler.version>
+        <maven-surefire.version>2.21.0</maven-surefire.version>
     </properties>
 
     <build>
