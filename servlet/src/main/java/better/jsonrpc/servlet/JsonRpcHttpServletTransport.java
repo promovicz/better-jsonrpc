@@ -12,10 +12,10 @@ import java.io.OutputStream;
 
 public class JsonRpcHttpServletTransport extends JsonRpcTransport {
 
-    HttpServletRequest mRequest;
-    HttpServletResponse mResponse;
+    private HttpServletRequest mRequest;
+    private HttpServletResponse mResponse;
 
-    public JsonRpcHttpServletTransport(ObjectMapper mapper, HttpServletRequest request, HttpServletResponse response) {
+    JsonRpcHttpServletTransport(ObjectMapper mapper, HttpServletRequest request, HttpServletResponse response) {
         super(mapper);
         mRequest = request;
         mResponse = response;

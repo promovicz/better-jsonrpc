@@ -12,11 +12,11 @@ import java.net.URI;
 
 public class JsonRpcHttpClient extends JsonRpcTransport {
 
-    URI mUri;
+    private URI mUri;
 
-    String mContentType;
+    private String mContentType;
 
-    HttpClient mClient;
+    private HttpClient mClient;
 
     public JsonRpcHttpClient(URI serviceUri, String contentType, HttpClient client, ObjectMapper mapper) {
         super(mapper);

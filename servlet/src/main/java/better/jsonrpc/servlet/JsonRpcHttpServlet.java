@@ -14,8 +14,8 @@ import java.io.IOException;
 
 public abstract class JsonRpcHttpServlet extends HttpServlet {
 
-    ObjectMapper mJsonMapper;
-    ObjectMapper mBsonMapper;
+    private ObjectMapper mJsonMapper;
+    private ObjectMapper mBsonMapper;
 
     /**
      * Initialize the servlet

@@ -12,9 +12,9 @@ import java.io.IOException;
  */
 public class JsonRpcHttpExchange extends ContentExchange {
 
-    JsonRpcHttpClient mClient;
+    private JsonRpcHttpClient mClient;
 
-    JsonRpcClientRequest mRequest;
+    private JsonRpcClientRequest mRequest;
 
     public JsonRpcHttpExchange(JsonRpcHttpClient client, JsonRpcClientRequest request) {
         mClient = client;
