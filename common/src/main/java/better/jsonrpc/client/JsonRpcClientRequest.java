@@ -2,8 +2,8 @@ package better.jsonrpc.client;
 
 import better.jsonrpc.core.JsonRpcTransport;
 import better.jsonrpc.exception.JsonRpcDisconnect;
-import better.jsonrpc.exception.JsonRpcProtocolError;
 import better.jsonrpc.exception.JsonRpcInterrupted;
+import better.jsonrpc.exception.JsonRpcProtocolError;
 import better.jsonrpc.exception.JsonRpcTimeout;
 import better.jsonrpc.exceptions.DefaultExceptionResolver;
 import com.fasterxml.jackson.core.JsonParser;

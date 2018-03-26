@@ -1,10 +1,8 @@
 package better.jsonrpc.servlet;
 
-import better.jsonrpc.core.JsonRpcTransport;
 import better.jsonrpc.server.JsonRpcServer;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.undercouch.bson4jackson.BsonFactory;
 
 import javax.servlet.ServletConfig;
@@ -13,8 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 public abstract class JsonRpcHttpServlet extends HttpServlet {
 

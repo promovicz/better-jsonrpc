@@ -1,7 +1,6 @@
 package better.jsonrpc.jetty.test.rpc;
 
 import better.jsonrpc.annotations.JsonRpcInterface;
-import better.jsonrpc.annotations.JsonRpcMethod;
 import better.jsonrpc.jetty.test.model.SimpleAddress;
 import better.jsonrpc.jetty.test.model.SimplePerson;
 

@@ -2,7 +2,6 @@ package better.jsonrpc.jetty.websocket;
 
 import better.jsonrpc.client.JsonRpcClientRequest;
 import better.jsonrpc.core.JsonRpcConnectedTransport;
-import better.jsonrpc.core.JsonRpcTransport;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;

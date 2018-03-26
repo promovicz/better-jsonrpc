@@ -2,7 +2,6 @@ package better.jsonrpc.jetty.test.rpc;
 
 import better.jsonrpc.jetty.test.model.SimpleAddress;
 import better.jsonrpc.jetty.test.model.SimplePerson;
-import better.jsonrpc.jetty.test.rpc.ISimpleServer;
 
 import java.util.Calendar;
 import java.util.Date;

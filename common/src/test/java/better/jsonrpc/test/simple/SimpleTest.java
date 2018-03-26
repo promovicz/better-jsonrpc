@@ -1,8 +1,8 @@
 package better.jsonrpc.test.simple;
 
 import better.jsonrpc.client.JsonRpcClient;
-import better.jsonrpc.exception.JsonRpcTimeout;
 import better.jsonrpc.core.JsonRpcExecutorTransport;
+import better.jsonrpc.exception.JsonRpcTimeout;
 import better.jsonrpc.server.JsonRpcServer;
 import better.jsonrpc.test.simple.model.SimpleAddress;
 import better.jsonrpc.test.simple.model.SimplePerson;

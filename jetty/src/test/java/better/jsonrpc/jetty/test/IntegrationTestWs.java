@@ -19,7 +19,9 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Integration test using WebSocket
