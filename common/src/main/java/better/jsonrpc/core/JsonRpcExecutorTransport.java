@@ -47,18 +47,6 @@ public class JsonRpcExecutorTransport extends JsonRpcTransport {
      *
      * The connections can be used immediately.
      *
-     * @param executor to be used for decoupling the connnections
-     * @return list containing exactly 2 connections
-     */
-    public static List<JsonRpcExecutorTransport> createExecutorConnectionPair(Executor executor) {
-        return createExecutorConnectionPair(new ObjectMapper(), executor);
-    }
-
-    /**
-     * Create a local connected pair of executor connections
-     *
-     * The connections can be used immediately.
-     *
      * @param mapper to be used for this connection
      * @param executor to be used for decoupling the connnections
      * @return list containing exactly 2 connections
