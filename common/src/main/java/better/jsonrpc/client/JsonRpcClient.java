@@ -140,8 +140,8 @@ public class JsonRpcClient {
      */
     public void sendRequest(JsonRpcTransport connection, JsonRpcClientRequest request) throws IOException {
         // log request
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Request: " + request.toString());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[" + request.getId() + "] request " + request.getRequest());
         }
         // send it
         connection.sendRequest(request);
@@ -152,8 +152,8 @@ public class JsonRpcClient {
      */
     public void sendNotification(JsonRpcTransport connection, JsonRpcClientRequest notification) throws IOException {
         // log notification
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Notification: " + notification.toString());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[" + notification.getId() + "] notification " + notification.getRequest());
         }
         // send it
         connection.sendNotification(notification);
@@ -250,12 +250,12 @@ public class JsonRpcClient {
                 mOutstandingRequests.remove(id);
             }
         }
-        // process the response
-        result = request.throwOrReturn();
         // log about return
         if (LOG.isTraceEnabled()) {
-            LOG.trace("[" + id + "] returning from " + methodName);
+            LOG.trace("[" + id + "] finished");
         }
+        // process the response
+        result = request.throwOrReturn();
         // return final result
         return result;
 	}
@@ -291,7 +291,7 @@ public class JsonRpcClient {
         }
         // log about return
         if (LOG.isTraceEnabled()) {
-            LOG.trace("[notification] returning from " + methodName);
+            LOG.trace("[notification] finished");
         }
 	}
 
@@ -306,10 +306,6 @@ public class JsonRpcClient {
         // check the id, we only use strings
 		if(idNode != null && idNode.isTextual()) {
 			String id = idNode.asText();
-            // log response
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Response: " + response.toString());
-            }
             // retrieve the request from the client table
             JsonRpcClientRequest req = null;
             synchronized (mOutstandingRequests) {
@@ -317,11 +313,20 @@ public class JsonRpcClient {
             }
             // if there was an actual request
 			if(req != null && req.getConnection() == connection) {
+                // log response
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("[" + id + "] response " + response);
+                }
                 // handle the response, unblocking the requestor
 				req.handleResponse(response);
                 // we have handled the request
                 return true;
-			}
+			} else {
+                // log response
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("unidentified response " + response);
+                }
+            }
 		}
         // we have not handled the request
         return false;

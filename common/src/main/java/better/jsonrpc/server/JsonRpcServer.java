@@ -94,8 +94,8 @@ public class JsonRpcServer {
 	public void handleRequest(Object handler, ObjectNode node, JsonRpcTransport connection) throws IOException {
         ObjectMapper mapper = connection.getMapper();
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Request: " + node.toString());
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("request " + node.toString());
 		}
 
 		// validate request
@@ -174,8 +174,8 @@ public class JsonRpcServer {
 						error.getCode(), error.getMessage(), error.getData());
 			}
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Response: " + response.toString());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("response " + response.toString());
             }
 			
 			connection.sendResponse(response);
@@ -229,7 +229,7 @@ public class JsonRpcServer {
 
 		// debug log
 		if (LOG.isTraceEnabled()) {
-			LOG.trace("Invoking method: "+m.getName());
+			LOG.trace("invoking " + m.getName());
 		}
 
 		// convert the parameters
