@@ -22,19 +22,19 @@ import java.util.Set;
 public abstract class ReflectionUtil {
 
 	private static Map<String, Set<Method>> methodCache
-		= new HashMap<String, Set<Method>>();
+		= new HashMap<>();
 
 	private static Map<Method, List<Class<?>>> parameterTypeCache
-		= new HashMap<Method, List<Class<?>>>();
+		= new HashMap<>();
 
 	private static Map<Class, List<Annotation>> classAnnotationCache
 			= new HashMap<>();
 
 	private static Map<Method, List<Annotation>> methodAnnotationCache
-		= new HashMap<Method, List<Annotation>>();
+		= new HashMap<>();
 
 	private static Map<Method, List<List<Annotation>>> methodParamAnnotationCache
-		= new HashMap<Method, List<List<Annotation>>>();
+		= new HashMap<>();
 
 	/**
 	 * Finds methods with the given name on the given class.
@@ -87,10 +87,8 @@ public abstract class ReflectionUtil {
 		if (parameterTypeCache.containsKey(method)) {
 			return parameterTypeCache.get(method);
 		}
-		List<Class<?>> types = new ArrayList<Class<?>>();
-		for (Class<?> type : method.getParameterTypes()) {
-			types.add(type);
-		}
+		List<Class<?>> types = new ArrayList<>();
+		types.addAll(Arrays.asList(method.getParameterTypes()));
 		types = Collections.unmodifiableList(types);
 		parameterTypeCache.put(method, types);
 		return types;
@@ -123,10 +121,8 @@ public abstract class ReflectionUtil {
 		if (methodAnnotationCache.containsKey(method)) {
 			return methodAnnotationCache.get(method);
 		}
-		List<Annotation> annotations = new ArrayList<Annotation>();
-		for (Annotation a : method.getAnnotations()) {
-			annotations.add(a);
-		}
+		List<Annotation> annotations = new ArrayList<>();
+		annotations.addAll(Arrays.asList(method.getAnnotations()));
 		annotations = Collections.unmodifiableList(annotations);
 		methodAnnotationCache.put(method, annotations);
 		return annotations;
@@ -178,7 +174,7 @@ public abstract class ReflectionUtil {
 	 * @return the {@link Annotation}s
 	 */
 	public static <T extends Annotation>
-		List<T> getAnnotations(Method method, Class<T> type) {
+	List<T> getAnnotations(Method method, Class<T> type) {
 		List<T> ret = new ArrayList<T>();
 		for (Annotation a : getAnnotations(method)) {
 			if (type.isInstance(a)) {
@@ -197,7 +193,7 @@ public abstract class ReflectionUtil {
 	 * @return the annotation or null
 	 */
 	public static <T extends Annotation>
-		T getAnnotation(Method method, Class<T> type) {
+	T getAnnotation(Method method, Class<T> type) {
 		for (Annotation a : getAnnotations(method)) {
 			if (type.isInstance(a)) {
 				return type.cast(a);
@@ -216,12 +212,10 @@ public abstract class ReflectionUtil {
 		if (methodParamAnnotationCache.containsKey(method)) {
 			return methodParamAnnotationCache.get(method);
 		}
-		List<List<Annotation>> annotations = new ArrayList<List<Annotation>>();
+		List<List<Annotation>> annotations = new ArrayList<>();
 		for (Annotation[] paramAnnotations : method.getParameterAnnotations()) {
-			List<Annotation> listAnnotations = new ArrayList<Annotation>();
-			for (Annotation a : paramAnnotations) {
-				listAnnotations.add(a);
-			}
+			List<Annotation> listAnnotations = new ArrayList<>();
+			listAnnotations.addAll(Arrays.asList(paramAnnotations));
 			annotations.add(listAnnotations);
 		}
 		annotations = Collections.unmodifiableList(annotations);
@@ -239,9 +233,9 @@ public abstract class ReflectionUtil {
 	 */
 	public static <T extends Annotation>
 		List<List<T>> getParameterAnnotations(Method method, Class<T> type) {
-		List<List<T>> annotations = new ArrayList<List<T>>();
+		List<List<T>> annotations = new ArrayList<>();
 		for (List<Annotation> paramAnnotations : getParameterAnnotations(method)) {
-			List<T> listAnnotations = new ArrayList<T>();
+			List<T> listAnnotations = new ArrayList<>();
 			for (Annotation a : paramAnnotations) {
 				if (type.isInstance(a)) {
 					listAnnotations.add(type.cast(a));
@@ -262,7 +256,7 @@ public abstract class ReflectionUtil {
 	 */
 	public static Object parseArguments(Method method, Object[] arguments, boolean useNamedParams) {
 		if (useNamedParams) {
-			Map<String, Object> namedParams = new HashMap<String, Object>();
+			Map<String, Object> namedParams = new HashMap<>();
 			Annotation[][] paramAnnotations = method.getParameterAnnotations();
 			for (int i=0; i<paramAnnotations.length; i++) {
 				Annotation[] ann = paramAnnotations[i];
