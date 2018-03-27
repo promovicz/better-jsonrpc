@@ -75,10 +75,10 @@ public class JsonRpcExecutorTransport extends JsonRpcTransport {
     }
 
     /** Executor used to decouple the connection */
-    Executor mExecutor;
+    private Executor mExecutor;
 
     /** The partner connection of this connection */
-    JsonRpcExecutorTransport mOtherConnection;
+    private JsonRpcExecutorTransport mOtherConnection;
 
     /**
      * Main constructor
@@ -86,7 +86,7 @@ public class JsonRpcExecutorTransport extends JsonRpcTransport {
      * @param mapper
      * @param executor
      */
-    public JsonRpcExecutorTransport(ObjectMapper mapper, Executor executor) {
+    private JsonRpcExecutorTransport(ObjectMapper mapper, Executor executor) {
         super(mapper);
         mExecutor = executor;
     }
@@ -102,7 +102,7 @@ public class JsonRpcExecutorTransport extends JsonRpcTransport {
     }
 
     /** @param otherConnection to use from now on */
-    public void setOtherConnection(JsonRpcExecutorTransport otherConnection) {
+    private void setOtherConnection(JsonRpcExecutorTransport otherConnection) {
         this.mOtherConnection = otherConnection;
     }
 

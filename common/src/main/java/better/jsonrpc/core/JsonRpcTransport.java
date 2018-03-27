@@ -37,16 +37,16 @@ public abstract class JsonRpcTransport {
 
 
     /** Object mapper to be used for this transport */
-    ObjectMapper mMapper;
+    private ObjectMapper mMapper;
 
     /** Server instance attached to this transport */
-	JsonRpcServer mServer;
+    private JsonRpcServer mServer;
 
     /** Client instance attached to this transport */
-	JsonRpcClient mClient;
+    private JsonRpcClient mClient;
 
     /** Handler instance for this transport */
-	Object mServerHandler;
+    private Object mServerHandler;
 
 
     /** Main constructor */

@@ -7,7 +7,7 @@ import java.util.Vector;
 public abstract class JsonRpcConnectedTransport extends JsonRpcTransport {
 
     /** Transport listeners */
-    Vector<Listener> mListeners = new Vector<Listener>();
+    private Vector<Listener> mListeners = new Vector<Listener>();
 
     public JsonRpcConnectedTransport(ObjectMapper mapper, boolean connected) {
         super(mapper);
@@ -15,8 +15,8 @@ public abstract class JsonRpcConnectedTransport extends JsonRpcTransport {
 
     /** Interface of connection state listeners */
     public interface Listener {
-        public void onOpen(JsonRpcTransport connection);
-        public void onClose(JsonRpcTransport connection);
+        void onOpen(JsonRpcTransport connection);
+        void onClose(JsonRpcTransport connection);
     }
 
     /**
