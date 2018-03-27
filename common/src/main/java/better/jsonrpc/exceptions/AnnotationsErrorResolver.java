@@ -2,7 +2,6 @@ package better.jsonrpc.exceptions;
 
 import better.jsonrpc.annotations.JsonRpcError;
 import better.jsonrpc.annotations.JsonRpcErrors;
-import better.jsonrpc.exceptions.JavaErrorResolver.ErrorData;
 import better.jsonrpc.util.ReflectionUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -31,7 +30,7 @@ public class AnnotationsErrorResolver
 						? em.message()
 						: t.getMessage();
 					return new JsonError(em.code(), message,
-						new ErrorData(em.exception().getName(), message));
+						new JavaErrorData(em.exception().getName(), message));
 				}
 			}
 		}

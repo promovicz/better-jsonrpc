@@ -4,9 +4,8 @@ import better.jsonrpc.annotations.JsonRpcParam;
 import better.jsonrpc.core.JsonRpcTransport;
 import better.jsonrpc.exceptions.AnnotationsErrorResolver;
 import better.jsonrpc.exceptions.DefaultErrorResolver;
-import better.jsonrpc.exceptions.DefaultExceptionResolver;
-import better.jsonrpc.exceptions.JavaErrorResolver;
 import better.jsonrpc.exceptions.ErrorResolver;
+import better.jsonrpc.exceptions.JsonError;
 import better.jsonrpc.exceptions.MultipleErrorResolver;
 import better.jsonrpc.util.ProtocolUtils;
 import better.jsonrpc.util.ReflectionUtil;
@@ -169,7 +168,7 @@ public class JsonRpcServer {
 				response = ProtocolUtils.createSuccessResponse(
 						mapper, version, id, result);
 			} else {
-				ErrorResolver.JsonError error = resolveError(thrown, methodArgs);
+				JsonError error = resolveError(thrown, methodArgs);
 				response = ProtocolUtils.createErrorResponse(
 						mapper, version, id,
 						error.getCode(), error.getMessage(), error.getData());
@@ -183,9 +182,9 @@ public class JsonRpcServer {
 		}
 	}
 	
-	private ErrorResolver.JsonError resolveError(Throwable thrown, MethodAndArgs methodArgs) {
+	private JsonError resolveError(Throwable thrown, MethodAndArgs methodArgs) {
 		// attempt to resolve the error
-		ErrorResolver.JsonError error = null;
+		JsonError error = null;
 
 		// get cause of exception
 		Throwable e = thrown;
@@ -204,7 +203,7 @@ public class JsonRpcServer {
 
 		// make sure we have a JsonError
 		if (error==null) {
-			error = new ErrorResolver.JsonError(
+			error = new JsonError(
 				0, e.getMessage(), e.getClass().getName());
 		}
 		

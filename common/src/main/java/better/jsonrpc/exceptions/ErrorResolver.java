@@ -23,47 +23,4 @@ public interface ErrorResolver {
 	 */
 	JsonError resolveError(Throwable t, Method method, List<JsonNode> arguments);
 
-	/**
-	 * A JSON error.
-	 */
-	public static class JsonError {
-
-		private int code;
-		private String message;
-		private Object data;
-
-		/**
-		 * Creates the error.
-		 * @param code the code
-		 * @param message the message
-		 * @param data the data
-		 */
-		public JsonError(int code, String message, Object data) {
-			this.code 		= code;
-			this.message	= message;
-			this.data		= data;
-		}
-
-		/**
-		 * @return the code
-		 */
-		public int getCode() {
-			return code;
-		}
-
-		/**
-		 * @return the message
-		 */
-		public String getMessage() {
-			return message;
-		}
-
-		/**
-		 * @return the data
-		 */
-		public Object getData() {
-			return data;
-		}
-
-	}
 }
