@@ -39,22 +39,22 @@ public class IntegrationTestHttp {
     static final Logger LOG = (Logger) LoggerFactory.getLogger(IntegrationTestHttp.class);
 
     /** Server to test against */
-    TestServer mServer;
+    private TestServer mServer;
 
     /** URI of server (initialized at start) */
-    URI mServerUri;
+    private URI mServerUri;
 
     /** Underlying HTTP client */
-    HttpClient mHttpClient;
+    private HttpClient mHttpClient;
 
     /** JSON-RPC client */
-    JsonRpcClient mRpcClient;
+    private JsonRpcClient mRpcClient;
 
     /** JSON-RPC transport */
-    JsonRpcHttpClient mRpcHttpClient;
+    private JsonRpcHttpClient mRpcHttpClient;
 
     /** JSON-RPC client proxy */
-    ISimpleServer mProxy;
+    private ISimpleServer mProxy;
 
     static {
         // initialize logging to be less noisy
@@ -178,12 +178,7 @@ public class IntegrationTestHttp {
     public void testConcurrentCalls() throws InterruptedException {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(5);
         for(int i = 0; i < 5000; i++) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    testPojo();
-                }
-            });
+            executor.execute(this::testPojo);
         }
         executor.shutdown();
         Assert.assertTrue(executor.awaitTermination(60, TimeUnit.SECONDS));

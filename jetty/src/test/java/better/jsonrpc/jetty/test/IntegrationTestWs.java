@@ -35,25 +35,25 @@ import java.util.concurrent.TimeUnit;
  */
 public class IntegrationTestWs {
 
-    static final Logger LOG = (Logger) LoggerFactory.getLogger(IntegrationTestWs.class);
+    private static final Logger LOG = (Logger) LoggerFactory.getLogger(IntegrationTestWs.class);
 
     /** Server to test against */
-    TestServer mServer;
+    private TestServer mServer;
 
     /** URI of server (initialized at start) */
-    URI mServerUri;
+    private URI mServerUri;
 
     /** WS client factors */
-    WebSocketClientFactory mWscFactory;
+    private WebSocketClientFactory mWscFactory;
 
     /** JSON-RPC client */
-    JsonRpcClient mClient;
+    private JsonRpcClient mClient;
 
     /** JSON-RPC transport */
-    JsonRpcWsClient mWsClient;
+    private JsonRpcWsClient mWsClient;
 
     /** JSON-RPC client proxy */
-    ISimpleServer mProxy;
+    private ISimpleServer mProxy;
 
     static {
         // initialize logging to be less noisy
@@ -182,12 +182,7 @@ public class IntegrationTestWs {
     public void testConcurrentCalls() throws InterruptedException {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(5);
         for(int i = 0; i < 5000; i++) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    testPojo();
-                }
-            });
+            executor.execute(this::testPojo);
         }
         executor.shutdown();
         Assert.assertTrue(executor.awaitTermination(60, TimeUnit.SECONDS));
