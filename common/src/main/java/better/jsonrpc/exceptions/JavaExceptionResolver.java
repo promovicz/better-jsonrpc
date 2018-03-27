@@ -15,12 +15,12 @@ import java.lang.reflect.InvocationTargetException;
  * a {@link Throwable}.
  *
  */
-public class DefaultExceptionResolver
+public class JavaExceptionResolver
 	implements ExceptionResolver {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DefaultExceptionResolver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JavaExceptionResolver.class);
 
-	public static final DefaultExceptionResolver INSTANCE = new DefaultExceptionResolver();
+	public static final JavaExceptionResolver INSTANCE = new JavaExceptionResolver();
 
 	/**
 	 * {@inheritDoc}

@@ -2,7 +2,7 @@ package better.jsonrpc.exceptions;
 
 import better.jsonrpc.annotations.JsonRpcError;
 import better.jsonrpc.annotations.JsonRpcErrors;
-import better.jsonrpc.exceptions.DefaultErrorResolver.ErrorData;
+import better.jsonrpc.exceptions.JavaErrorResolver.ErrorData;
 import better.jsonrpc.util.ReflectionUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 

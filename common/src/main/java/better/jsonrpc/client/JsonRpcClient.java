@@ -2,7 +2,7 @@ package better.jsonrpc.client;
 
 import better.jsonrpc.core.JsonRpcConnectedTransport;
 import better.jsonrpc.core.JsonRpcTransport;
-import better.jsonrpc.exceptions.DefaultExceptionResolver;
+import better.jsonrpc.exceptions.JavaExceptionResolver;
 import better.jsonrpc.exceptions.ExceptionResolver;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,7 +51,7 @@ public class JsonRpcClient {
 	private AtomicInteger mIdGenerator;
 
     /** Exception converter */
-	private ExceptionResolver mExceptionResolver = DefaultExceptionResolver.INSTANCE;
+	private ExceptionResolver mExceptionResolver = JavaExceptionResolver.INSTANCE;
 
     /** Table of outstanding requests */
     private Hashtable<String, JsonRpcClientRequest> mOutstandingRequests =

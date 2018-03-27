@@ -3,7 +3,7 @@ package better.jsonrpc.server;
 import better.jsonrpc.annotations.JsonRpcParam;
 import better.jsonrpc.core.JsonRpcTransport;
 import better.jsonrpc.exceptions.AnnotationsErrorResolver;
-import better.jsonrpc.exceptions.DefaultErrorResolver;
+import better.jsonrpc.exceptions.JavaErrorResolver;
 import better.jsonrpc.exceptions.ErrorResolver;
 import better.jsonrpc.exceptions.MultipleErrorResolver;
 import better.jsonrpc.util.ProtocolUtils;
@@ -44,7 +44,7 @@ public class JsonRpcServer {
 
     /** Default error resolver */
 	public static final ErrorResolver DEFAULT_ERRROR_RESOLVER
-		= new MultipleErrorResolver(AnnotationsErrorResolver.INSTANCE, DefaultErrorResolver.INSTANCE);
+		= new MultipleErrorResolver(AnnotationsErrorResolver.INSTANCE, JavaErrorResolver.INSTANCE);
 
     /** Protocol interfaces for this server */
     private Class<?>[] mRemoteInterfaces;
