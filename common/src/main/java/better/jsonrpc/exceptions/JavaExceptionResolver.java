@@ -9,14 +9,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Default implementation of the {@link ExceptionResolver}
- * interface that attemps to re-throw the same exception
- * that was thrown by the server.  This always returns
- * a {@link Throwable}.
- *
+ * Exception resolver that reflects remote-side Java exceptions
+ * <p/>
+ * DANGEROUS unless used between trusted nodes.
+ * <p/>
  */
-public class JavaExceptionResolver
-	implements ExceptionResolver {
+public class JavaExceptionResolver implements ExceptionResolver {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JavaExceptionResolver.class);
 
@@ -151,4 +149,5 @@ public class JavaExceptionResolver
 			return null;
 		}
 	}
+
 }

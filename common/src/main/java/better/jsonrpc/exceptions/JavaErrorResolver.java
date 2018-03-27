@@ -6,13 +6,12 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * An {@link ErrorResolver} that puts type information into the
- * data portion of the error.  This {@link ErrorResolver} always
- * returns a {@link JsonError}.
- *
+ * Error resolver that reflects Java exceptions into JSON-RPC
+ * <p/>
+ * May be considered inappropriate in some environments, but indispensable in others.
+ * <p/>
  */
-public class JavaErrorResolver
-	implements ErrorResolver {
+public class JavaErrorResolver implements ErrorResolver {
 
 	public static final JavaErrorResolver INSTANCE = new JavaErrorResolver();
 

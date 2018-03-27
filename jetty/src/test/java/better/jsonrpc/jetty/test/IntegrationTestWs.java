@@ -1,6 +1,7 @@
 package better.jsonrpc.jetty.test;
 
 import better.jsonrpc.client.JsonRpcClient;
+import better.jsonrpc.exception.JsonRpcException;
 import better.jsonrpc.exception.JsonRpcTimeout;
 import better.jsonrpc.jetty.test.model.SimpleAddress;
 import better.jsonrpc.jetty.test.model.SimplePerson;
@@ -143,12 +144,12 @@ public class IntegrationTestWs {
         Assert.assertEquals("fnord", mProxy.toString("fnord"));
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = JsonRpcException.class)
     public void testException() throws Exception {
         mProxy.throwException();
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = JsonRpcException.class)
     public void testRuntimeException() {
         mProxy.throwRuntimeException();
     }

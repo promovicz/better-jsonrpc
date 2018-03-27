@@ -2,6 +2,7 @@ package better.jsonrpc.test.simple;
 
 import better.jsonrpc.client.JsonRpcClient;
 import better.jsonrpc.core.JsonRpcExecutorTransport;
+import better.jsonrpc.exception.JsonRpcException;
 import better.jsonrpc.exception.JsonRpcTimeout;
 import better.jsonrpc.server.JsonRpcServer;
 import better.jsonrpc.test.simple.model.SimpleAddress;
@@ -77,12 +78,12 @@ public class SimpleTest {
         Assert.assertEquals("fnord", proxy.toString("fnord"));
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = JsonRpcException.class)
     public void testException() throws Exception {
         proxy.throwException();
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = JsonRpcException.class)
     public void testRuntimeException() {
         proxy.throwRuntimeException();
     }

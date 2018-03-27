@@ -5,6 +5,7 @@ import better.jsonrpc.exception.JsonRpcDisconnect;
 import better.jsonrpc.exception.JsonRpcInterrupted;
 import better.jsonrpc.exception.JsonRpcProtocolError;
 import better.jsonrpc.exception.JsonRpcTimeout;
+import better.jsonrpc.exceptions.DefaultExceptionResolver;
 import better.jsonrpc.exceptions.JavaExceptionResolver;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JavaType;
@@ -179,7 +180,7 @@ public class JsonRpcClientRequest {
                 && !mResponse.get("error").isNull()) {
             // resolve the exception
             if (mClient.getExceptionResolver() == null) {
-                mRemoteException = JavaExceptionResolver.INSTANCE.resolveException(mResponse);
+                mRemoteException = DefaultExceptionResolver.INSTANCE.resolveException(mResponse);
             } else {
                 mRemoteException = mClient.getExceptionResolver().resolveException(mResponse);
             }
