@@ -19,13 +19,13 @@ import java.util.List;
  */
 public class SimpleTest {
 
-    static JsonRpcExecutorTransport connectionA;
-    static JsonRpcExecutorTransport connectionB;
+    private static JsonRpcExecutorTransport connectionA;
+    private static JsonRpcExecutorTransport connectionB;
 
-    static JsonRpcClient client;
-    static JsonRpcServer server;
+    private static JsonRpcClient client;
+    private static JsonRpcServer server;
 
-    static ISimpleServer proxy;
+    private static ISimpleServer proxy;
 
     static {
         // create a pair of local connections
