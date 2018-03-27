@@ -97,34 +97,22 @@ public class JsonRpcExecutorTransport extends JsonRpcTransport {
     /** {@inheritDoc} */
     @Override
     public void sendRequest(final JsonRpcClientRequest request) throws IOException {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                mOtherConnection.handleRequest(request.getRequest());
-            }
-        });
+        mExecutor.execute(() ->
+                mOtherConnection.handleRequest(request.getRequest()));
     }
 
     /** {@inheritDoc} */
     @Override
     public void sendNotification(final JsonRpcClientRequest notification) throws IOException {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                mOtherConnection.handleNotification(notification.getRequest());
-            }
-        });
+        mExecutor.execute(() ->
+                mOtherConnection.handleNotification(notification.getRequest()));
     }
 
     /** {@inheritDoc} */
     @Override
     public void sendResponse(final ObjectNode response) throws IOException {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                mOtherConnection.handleResponse(response);
-            }
-        });
+        mExecutor.execute(() ->
+                mOtherConnection.handleResponse(response));
     }
 
 }
