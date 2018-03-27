@@ -83,7 +83,6 @@ public class DefaultExceptionResolver
 			errorObject.get("data"));
 	}
 
-
 	/**
 	 * Attempts to create an {@link Throwable} of the given type
 	 * with the given message.  For this method to create a
@@ -105,7 +104,7 @@ public class DefaultExceptionResolver
 		IllegalAccessException,
 		InvocationTargetException {
 
-		// load class
+		// get the class
 		Class<?> clazz = null;
 		try {
 			clazz = Class.forName(typeName);
@@ -114,11 +113,13 @@ public class DefaultExceptionResolver
 			return null;
 		}
 
-		// get Throwable clazz
+		// check that the class is throwable
 		if (!Throwable.class.isAssignableFrom(clazz)) {
 			LOG.warn("Type does not inherit from Throwable" + clazz.getName());
 			return null;
 		}
+
+		// cast the object
 		@SuppressWarnings("unchecked")
 		Class<? extends Throwable> tClazz = (Class<? extends Throwable>)clazz;
 
@@ -132,27 +133,22 @@ public class DefaultExceptionResolver
 			messageCtr = tClazz.getConstructor(String.class);
 		} catch(Throwable t) { /* eat it */ }
 
-
-
 		// messageCtr
 		if (message!=null && messageCtr!=null) {
 			return messageCtr.newInstance(message);
 		} else if (message!=null && defaultCtr!=null) {
 			LOG.warn("Unable to invoke message constructor for " + clazz.getName());
 			return defaultCtr.newInstance();
-
 		// defaultCtr
 		} else if (message==null && defaultCtr!=null) {
 			return defaultCtr.newInstance();
 		} else if (message==null && messageCtr!=null) {
 			LOG.warn("Passing null message to message constructor for " + clazz.getName());
 			return messageCtr.newInstance((String)null);
-
 		// can't find a constructor
 		} else {
 			LOG.warn("Unable to find a suitable constructor for " + clazz.getName());
 			return null;
 		}
-
 	}
 }
