@@ -9,11 +9,11 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 public class TestServer {
 
-    Server mServer;
-    SelectChannelConnector mConnector;
-    ServletHandler mServletHandler;
+    private Server mServer;
+    private SelectChannelConnector mConnector;
+    private ServletHandler mServletHandler;
 
-    ObjectMapper  mJsonMapper;
+    private ObjectMapper  mJsonMapper;
 
     public TestServer() {
         mJsonMapper = new ObjectMapper();
