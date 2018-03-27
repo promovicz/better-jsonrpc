@@ -8,6 +8,7 @@ import better.jsonrpc.annotations.JsonRpcParam;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +26,9 @@ public abstract class ReflectionUtil {
 
 	private static Map<Method, List<Class<?>>> parameterTypeCache
 		= new HashMap<Method, List<Class<?>>>();
+
+	private static Map<Class, List<Annotation>> classAnnotationCache
+			= new HashMap<>();
 
 	private static Map<Method, List<Annotation>> methodAnnotationCache
 		= new HashMap<Method, List<Annotation>>();
@@ -94,6 +98,23 @@ public abstract class ReflectionUtil {
 
 	/**
 	 * Returns all of the {@link Annotation}s defined on
+	 * the given {@link Class}.
+	 * @param clazz the {@link Class}
+	 * @return the {@link Annotation}s
+	 */
+	public static List<Annotation> getAnnotations(Class<?> clazz) {
+		if (classAnnotationCache.containsKey(clazz)) {
+			return classAnnotationCache.get(clazz);
+		}
+		List<Annotation> annotations = new ArrayList<>();
+		annotations.addAll(Arrays.asList(clazz.getAnnotations()));
+		annotations = Collections.unmodifiableList(annotations);
+		classAnnotationCache.put(clazz, annotations);
+		return annotations;
+	}
+
+	/**
+	 * Returns all of the {@link Annotation}s defined on
 	 * the given {@link Method}.
 	 * @param method the {@link Method}
 	 * @return the {@link Annotation}s
@@ -109,6 +130,43 @@ public abstract class ReflectionUtil {
 		annotations = Collections.unmodifiableList(annotations);
 		methodAnnotationCache.put(method, annotations);
 		return annotations;
+	}
+
+	/**
+	 * Returns {@link Annotation}s of the given type defined
+	 * on the given {@link Class}.
+	 * @param <T> the {@link Annotation} type
+	 * @param clazz the {@link Class}
+	 * @param type the type
+	 * @return the {@link Annotation}s
+	 */
+	public static <T extends Annotation>
+	List<T> getAnnotations(Class<?> clazz, Class<T> type) {
+		List<T> ret = new ArrayList<T>();
+		for (Annotation a : getAnnotations(clazz)) {
+			if (type.isInstance(a)) {
+				ret.add(type.cast(a));
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Returns the first {@link Annotation} of the given type
+	 * defined on the given {@link Class}.
+	 * @param <T> the type
+	 * @param clazz the class
+	 * @param type the type of annotation
+	 * @return the annotation or null
+	 */
+	public static <T extends Annotation>
+	T getAnnotation(Class clazz, Class<T> type) {
+		for (Annotation a : getAnnotations(clazz)) {
+			if (type.isInstance(a)) {
+				return type.cast(a);
+			}
+		}
+		return null;
 	}
 
 	/**

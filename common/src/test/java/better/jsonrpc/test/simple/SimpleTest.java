@@ -43,7 +43,7 @@ public class SimpleTest {
         client = new JsonRpcClient();
         client.setRequestTimeout(500);
         connectionB.bindClient(client);
-        proxy = (ISimpleServer)connectionB.makeProxy(ISimpleServer.class);
+        proxy = connectionB.makeProxy(ISimpleServer.class);
     }
 
     @Test
@@ -78,16 +78,6 @@ public class SimpleTest {
         Assert.assertEquals("fnord", proxy.toString("fnord"));
     }
 
-    @Test(expected = JsonRpcException.class)
-    public void testException() throws Exception {
-        proxy.throwException();
-    }
-
-    @Test(expected = JsonRpcException.class)
-    public void testRuntimeException() {
-        proxy.throwRuntimeException();
-    }
-
     @Test
     public void testPojo() {
         SimplePerson person = new SimplePerson("Alice", "Archer");
@@ -109,6 +99,104 @@ public class SimpleTest {
     public void testSequentialCalls() {
         for(int i = 0; i < 1000; i++) {
             testPojo();
+        }
+    }
+
+    @Test
+    public void testSimpleExceptionA() throws Exception {
+        try {
+            proxy.throwSimpleException("SimpleExceptionA");
+            Assert.fail();
+        } catch (JsonRpcException e) {
+            Assert.assertEquals(1000, e.getCode());
+            Assert.assertEquals("SimpleExceptionA", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testSimpleExceptionB() throws Exception {
+        try {
+            proxy.throwSimpleException("SimpleExceptionB");
+            Assert.fail();
+        } catch (JsonRpcException e) {
+            Assert.assertEquals(1000, e.getCode());
+            Assert.assertEquals("SimpleExceptionB", e.getMessage());
+        }
+    }
+
+    @Test(expected = JsonRpcException.class)
+    public void testException() throws Exception {
+        proxy.throwException();
+    }
+
+    @Test(expected = JsonRpcException.class)
+    public void testRuntimeException() {
+        proxy.throwRuntimeException();
+    }
+
+    @Test
+    public void testTranslatedException() throws Exception {
+        try {
+            proxy.throwTranslatedException();
+            Assert.fail();
+        } catch (JsonRpcException e) {
+            Assert.assertEquals(2342, e.getCode());
+            Assert.assertEquals("TranslatedException", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testTranslatedRuntimeException() {
+        try {
+            proxy.throwTranslatedRuntimeException();
+            Assert.fail();
+        } catch (JsonRpcException e) {
+            Assert.assertEquals(2342, e.getCode());
+            Assert.assertEquals("TranslatedRuntimeException", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testTranslatedExceptionsA() throws Exception {
+        try {
+            proxy.throwTranslatedExceptions(false);
+            Assert.fail();
+        } catch (JsonRpcException e) {
+            Assert.assertEquals(23, e.getCode());
+            Assert.assertEquals("TranslatedIOException", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testTranslatedExceptionsB() throws Exception {
+        try {
+            proxy.throwTranslatedExceptions(true);
+            Assert.fail();
+        } catch (JsonRpcException e) {
+            Assert.assertEquals(42, e.getCode());
+            Assert.assertEquals("TranslatedInterruptedException", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testTranslatedRuntimeExceptionsA() throws Exception {
+        try {
+            proxy.throwTranslatedRuntimeExceptions(false);
+            Assert.fail();
+        } catch (JsonRpcException e) {
+            Assert.assertEquals(23, e.getCode());
+            Assert.assertEquals("TranslatedNullPointerException", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testTranslatedRuntimeExceptionsB() throws Exception {
+        try {
+            proxy.throwTranslatedRuntimeExceptions(true);
+            Assert.fail();
+        } catch (JsonRpcException e) {
+            Assert.assertEquals(42, e.getCode());
+            Assert.assertEquals("TranslatedArrayIndexOutOfBoundsException", e.getMessage());
         }
     }
 

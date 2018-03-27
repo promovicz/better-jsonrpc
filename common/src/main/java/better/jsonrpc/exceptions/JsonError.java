@@ -9,6 +9,10 @@ public class JsonError {
     private String message;
     private Object data;
 
+    public JsonError(int code, String message) {
+        this(code, message, null);
+    }
+
     /**
      * Creates the error.
      * @param code the code

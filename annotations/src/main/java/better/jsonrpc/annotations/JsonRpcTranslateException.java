@@ -5,14 +5,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Annotation for mapping exceptions in service methods to
- * custom JsonRpc errors.
- *
- */
-@Target(ElementType.ANNOTATION_TYPE)
+@Target({
+		ElementType.METHOD,
+		ElementType.TYPE,
+		ElementType.ANNOTATION_TYPE
+})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JsonRpcError {
+public @interface JsonRpcTranslateException {
 
 	/**
 	 * Exception handled by the annotation.
