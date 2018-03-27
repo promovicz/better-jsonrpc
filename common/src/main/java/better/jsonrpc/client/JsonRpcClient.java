@@ -3,7 +3,6 @@ package better.jsonrpc.client;
 import better.jsonrpc.core.JsonRpcConnectedTransport;
 import better.jsonrpc.core.JsonRpcTransport;
 import better.jsonrpc.exceptions.DefaultExceptionResolver;
-import better.jsonrpc.exceptions.JavaExceptionResolver;
 import better.jsonrpc.exceptions.ExceptionResolver;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

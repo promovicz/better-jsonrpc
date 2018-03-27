@@ -6,7 +6,6 @@ import better.jsonrpc.exception.JsonRpcInterrupted;
 import better.jsonrpc.exception.JsonRpcProtocolError;
 import better.jsonrpc.exception.JsonRpcTimeout;
 import better.jsonrpc.exceptions.DefaultExceptionResolver;
-import better.jsonrpc.exceptions.JavaExceptionResolver;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
